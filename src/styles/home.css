@@ -1,0 +1,627 @@
+/* Styles pour la page Home - Version centrée et responsive */
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.home-container {
+  width: 100%;
+  overflow-x: hidden;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.placing {
+  padding: 1.5rem 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.placing h1 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 700;
+  padding: 0 1rem;
+}
+
+/* Conteneur avec hauteur fixe et défilement */
+.etab-grid-wrapper {
+  width: 100%;
+  position: relative;
+  max-height: 800px;
+  overflow-y: hidden;
+  margin-bottom: 2rem;
+  transition: max-height 0.5s ease;
+  display: flex;
+  justify-content: center;
+}
+
+/* Classe pour quand on veut tout afficher */
+.etab-grid-wrapper.expanded {
+  max-height: none;
+  overflow-y: visible;
+}
+
+/* Grille centrée */
+.etab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+  box-sizing: border-box;
+  justify-items: center; /* Centre les cartes dans chaque cellule */
+}
+
+/* Correction pour éviter le débordement */
+.etab-grid > * {
+  max-width: 100%;
+  box-sizing: border-box;
+  width: 100%; /* Assure que les cartes prennent toute la largeur disponible */
+}
+
+.etab-card {
+  position: relative;
+  height: 350px;
+  border-radius: 16px;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  min-width: 0;
+  max-width: 100%; /* Limite la largeur maximale */
+}
+
+.etab-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.etab-rating {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-weight: 600;
+  color: #ff9500;
+  font-size: 0.9rem;
+  z-index: 2;
+  backdrop-filter: blur(4px);
+  max-width: 80px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.etab-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, 
+    rgba(0, 0, 0, 0.9) 0%, 
+    rgba(0, 0, 0, 0.7) 50%, 
+    rgba(0, 0, 0, 0.3) 100%);
+  padding: 1.5rem 1rem;
+  color: white;
+  transform: translateY(0);
+  transition: transform 0.4s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.etab-card:hover .etab-overlay {
+  transform: translateY(0);
+}
+
+.etab-info {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.etab-info h3 {
+  font-size: 1.4rem;
+  margin: 0 0 0.5rem 0;
+  color: white;
+  font-weight: 700;
+  line-height: 1.3;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: left;
+}
+
+.etab-description {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin: 0.5rem 0;
+  opacity: 0.9;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-wrap: break-word;
+  text-align: left;
+}
+
+.etab-address {
+  display: block;
+  font-size: 0.85rem;
+  opacity: 0.8;
+  margin: 0.5rem 0;
+  color: #ddd;
+  word-wrap: break-word;
+  text-align: left;
+}
+
+.details-link {
+  display: inline-block;
+  color: rgba(126, 221, 126, 0.726);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  text-align: center;
+}
+
+.details-link:hover {
+  color: rgba(126, 221, 126, 0.726);
+  background: rgba(255, 255, 255, 0.2);
+  text-decoration: none;
+  transform: translateX(5px);
+}
+
+/* Conteneur pour le bouton Voir plus */
+.see-more-container {
+  text-align: center;
+  margin: 2rem 0;
+  padding: 1rem 0;
+  border-top: 2px solid #f0f0f0;
+  border-bottom: 2px solid #f0f0f0;
+  width: 100%;
+}
+
+.see-more-btn, .see-less-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+  display: inline-block;
+  min-width: 200px;
+}
+
+.see-more-btn:hover, .see-less-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.see-less-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+}
+
+.see-less-btn:hover {
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+/* Lien vers tous les établissements */
+.all-etabs-link-container {
+  text-align: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+  width: 100%;
+}
+
+.all-etabs-link {
+  display: inline-block;
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 0.8rem 2rem;
+  border: 2px solid #667eea;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  background: white;
+  min-width: 250px;
+}
+
+.all-etabs-link:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Indicateur de dégradé pour montrer qu'il y a plus de contenu */
+.etab-grid-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, white);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.etab-grid-wrapper:not(.expanded)::after {
+  opacity: 1;
+}
+
+/* États de chargement et erreur */
+.loading-state {
+  text-align: center;
+  padding: 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: #fff5f5;
+  border-radius: 12px;
+  border: 1px solid #fed7d7;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.error-state p {
+  color: #c53030;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.reload-btn {
+  background: #059669;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+.reload-btn:hover {
+  background: #059669;
+  transform: translateY(-2px);
+}
+
+.no-data-state {
+  text-align: center;
+  padding: 4rem 1rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  color: #64748b;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* =========================================== */
+/* RESPONSIVE DESIGN AMÉLIORÉ */
+/* =========================================== */
+
+/* Tablette (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .content-wrapper {
+    padding: 0 1rem;
+  }
+  
+  .etab-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+    max-width: 900px;
+  }
+  
+  .etab-grid-wrapper {
+    max-height: 750px;
+  }
+}
+
+/* Tablette moyenne (max-width: 768px) */
+@media (max-width: 768px) {
+  .home-container {
+    padding: 0.5rem;
+  }
+  
+  .content-wrapper {
+    padding: 0 0.5rem;
+  }
+  
+  .placing {
+    padding: 1rem 0;
+  }
+  
+  .placing h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+    padding: 0 0.5rem;
+  }
+  
+  .etab-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    max-width: 100%;
+  }
+  
+  .etab-grid-wrapper {
+    max-height: 700px;
+  }
+  
+  .etab-card {
+    height: 320px;
+  }
+  
+  .etab-info h3 {
+    font-size: 1.3rem;
+  }
+  
+  .see-more-btn, .see-less-btn {
+    padding: 0.7rem 1.5rem;
+    font-size: 0.9rem;
+    min-width: 180px;
+  }
+  
+  .all-etabs-link {
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+    min-width: 200px;
+  }
+}
+
+/* Mobile (max-width: 640px) */
+@media (max-width: 640px) {
+  .etab-grid {
+    grid-template-columns: 1fr; /* Une seule colonne */
+    gap: 0.8rem;
+    max-width: 500px; /* Limite la largeur maximale */
+    margin: 0 auto;
+  }
+  
+  .etab-grid-wrapper {
+    max-height: 650px;
+    justify-content: center;
+  }
+  
+  .etab-card {
+    height: 300px;
+    max-width: 100%;
+  }
+  
+  .etab-info h3 {
+    font-size: 1.2rem;
+  }
+  
+  .details-link {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+  
+  .error-state,
+  .no-data-state {
+    padding: 2rem 0.5rem;
+    margin: 0 auto;
+    width: 95%;
+  }
+  
+  .see-more-container {
+    margin: 1.5rem 0;
+    padding: 0.8rem 0;
+  }
+  
+  .all-etabs-link-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+  }
+}
+
+/* Petit mobile (max-width: 480px) */
+@media (max-width: 480px) {
+  .home-container {
+    padding: 0.25rem;
+  }
+  
+  .content-wrapper {
+    padding: 0 0.25rem;
+  }
+  
+  .placing h1 {
+    font-size: 1.6rem;
+    padding: 0 0.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  .etab-grid {
+    gap: 0.6rem;
+    max-width: 100%;
+    padding: 0 0.5rem;
+  }
+  
+  .etab-grid-wrapper {
+    max-height: 600px;
+  }
+  
+  .etab-card {
+    height: 280px;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .etab-overlay {
+    padding: 1rem 0.8rem;
+  }
+  
+  .etab-info h3 {
+    font-size: 1.1rem;
+  }
+  
+  .see-more-btn, .see-less-btn {
+    width: 90%;
+    max-width: 300px;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .all-etabs-link {
+    width: 90%;
+    max-width: 300px;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Très petit mobile (max-width: 360px) */
+@media (max-width: 360px) {
+  .placing h1 {
+    font-size: 1.4rem;
+  }
+  
+  .etab-grid {
+    gap: 0.5rem;
+    padding: 0 0.25rem;
+  }
+  
+  .etab-card {
+    height: 260px;
+  }
+  
+  .etab-overlay {
+    padding: 0.8rem 0.6rem;
+  }
+  
+  .etab-info h3 {
+    font-size: 1rem;
+  }
+  
+  .etab-description {
+    font-size: 0.8rem;
+    -webkit-line-clamp: 1;
+  }
+  
+  .etab-address {
+    font-size: 0.75rem;
+  }
+  
+  .details-link {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+  }
+  
+  .see-more-btn, .see-less-btn,
+  .all-etabs-link {
+    width: 95%;
+    padding: 0.5rem 0.8rem;
+  }
+}
+
+/* Supprime le gradient sur mobile quand le menu est étendu */
+@media (max-width: 768px) {
+  .etab-grid-wrapper::after {
+    display: none;
+  }
+}
+
+/* Assure que tout reste dans les limites de l'écran */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Amélioration de l'accessibilité */
+.details-link:focus-visible,
+.see-more-btn:focus-visible,
+.see-less-btn:focus-visible,
+.all-etabs-link:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* Mode sombre */
+@media (prefers-color-scheme: dark) {
+  .placing h1 {
+    color: #e2e8f0;
+  }
+  
+  .see-more-container {
+    border-color: #374151;
+  }
+  
+  .all-etabs-link-container {
+    border-color: #374151;
+  }
+  
+  .all-etabs-link {
+    background: #1f2937;
+    color: #e2e8f0;
+  }
+  
+  .error-state {
+    background: #2d1f1f;
+    border-color: #7b3f3f;
+  }
+  
+  .no-data-state {
+    background: #1f2937;
+    color: #9ca3af;
+  }
+  
+  .etab-grid-wrapper::after {
+    background: linear-gradient(to bottom, transparent, #1f2937);
+  }
+}

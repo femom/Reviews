@@ -1,0 +1,108 @@
+.register-container{min-height:80vh;display:flex;align-items:center;justify-content:center;padding:40px}
+.register-card{width:420px;background:#fff;padding:22px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.08)}
+.register-card h2{margin:0 0 14px;color:#133}
+.register-card input{width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;margin-bottom:12px}
+.register-card .submit{background:#1e7f4d;color:#fff;border:none;padding:10px;border-radius:8px;width:100%;cursor:pointer}
+button.submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.parent{
+    display: flex;
+    min-height: 100vh;
+} 
+.enfant1{
+    background-image:url(../../../assets/images/img3.jpeg);
+    background-size: cover;
+    background-position: center;
+    width: 50%;
+    height: 100vh;
+}
+/* register.css - Ajoutez ces styles */
+/* Styles pour le sélecteur de rôle */
+.role-selector {
+  margin: 15px 0;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.role-selector label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.role-options {
+  display: flex;
+  gap: 20px;
+  margin-top: 8px;
+}
+
+.role-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.role-option input[type="radio"] {
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.role-option span {
+  font-size: 14px;
+  color: #555;
+}
+
+.role-option input[type="radio"]:checked + span {
+  font-weight: 600;
+  color: #007bff;
+}
+
+/* Style pour le bouton désactivé */
+.role-option input[type="radio"]:disabled + span {
+  color: #999;
+  cursor: not-allowed;
+}
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 12px 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border-left: 4px solid #c62828;
+  font-size: 0.95rem;
+}
+
+.error-message div {
+  margin: 4px 0;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+}
+
+.login-link a {
+  color: #2196f3;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+@media (max-width:900px){.register-container{padding:20px}.register-card{width:100%}}

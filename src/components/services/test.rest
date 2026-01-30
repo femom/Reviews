@@ -1,0 +1,1 @@
+POST "/api/groupe-8/auth/login"
