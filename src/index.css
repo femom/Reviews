@@ -1,22 +1,125 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens (global CSS variables) */
+:root {
+  --brand-indigo: 79 70 229;
+  /* rgb */
+  --brand-violet: 124 58 237;
+  --brand-cyan: 6 182 212;
+  --brand-emerald: 16 185 129;
+
+  /* Page / typography tokens as RGB components (used with rgb() / rgba()) */
+  --page-bg: 248 250 252;
+  /* light: slate-50 */
+  --page-text: 31 41 55;
+  /* light: slate-800 */
+
+  /* Glassmorphism tokens (use with rgba(var(--glass-bg), var(--glass-alpha))) */
+  --glass-bg: 255 255 255;
+  /* white */
+  --glass-alpha: 0.10;
+  /* default glass alpha (10%) */
+  --glass-border: rgba(255, 255, 255, 0.05);
+
+  --shadow-soft: 0 8px 30px rgba(15, 23, 42, 0.06);
+  --shadow-strong: 0 14px 45px rgba(15, 23, 42, 0.12);
+
+  --radius-lg: 12px;
+  --radius-md: 8px;
+}
+
+/* Dark mode overrides (Tailwind toggles the .dark class) */
+.dark {
+  --page-bg: 15 23 42;
+  /* slate-900 */
+  --page-text: 241 245 249;
+  /* slate-100 */
+
+  /* For dark glass surfaces we base on dark background */
+  --glass-bg: 15 23 42;
+  --glass-alpha: 0.08;
+  --glass-border: rgba(255, 255, 255, 0.04);
+}
+
+/* Subtle utilities used across the app */
+.component-surface {
+  /* Keep non-color utilities via @apply, but use CSS variables for colors */
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  /* explicit backdrop blur to avoid relying on a generated utility inside @apply */
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  background-color: rgba(var(--glass-bg), var(--glass-alpha));
+  border: 1px solid var(--glass-border);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  /* gap-2 */
+  padding: 0.5rem 1rem;
+  /* py-2 px-4 */
+  border-radius: 0.375rem;
+  /* rounded-md */
+  font-weight: 600;
+  /* font-semibold */
+  transition: all 200ms;
+  /* duration-200 */
+  color: #fff;
+  background: linear-gradient(90deg, rgba(var(--brand-emerald), 1) 0%, rgba(var(--brand-violet), 0.9) 100%);
+  box-shadow: var(--shadow-strong);
+}
+
+/* Motion helpers */
+.fade-in {
+  animation: fade-in 200ms ease-out both;
+}
+
+.slide-in {
+  animation: slide-in 220ms cubic-bezier(.2, .9, .2, 1) both;
+}
 
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes slide-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes scale-in {
-  from { opacity: 0; transform: scale(0.96); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
-html { scroll-behavior: smooth; }
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  @apply antialiased text-gray-900 bg-[#f8fafc];
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: rgb(var(--page-text));
+  background-color: rgb(var(--page-bg));
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
-.safe-top { padding-top: env(safe-area-inset-top, 0); }
-.safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0); }
+
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
