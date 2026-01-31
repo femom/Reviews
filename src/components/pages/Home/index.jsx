@@ -1,10 +1,16 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import NavBar from "../../NavBar/index.jsx";
+
 import api from "../../services/api.js";
 import Footer from "../../footer/index.jsx";
 import Carousel from "../../Carroussel";
-import { HiStar, HiLocationMarker, HiExclamationCircle, HiArrowRight } from "react-icons/hi";
+import {
+  HiStar,
+  HiLocationMarker,
+  HiExclamationCircle,
+  HiArrowRight,
+} from "react-icons/hi";
+import { Card } from "../../ui";
 
 import img1 from "../../../assets/images/pexels-fotoaibe-1571459.jpg";
 import img2 from "../../../assets/images/pexels-falling4utah-1080721.jpg";
@@ -59,12 +65,13 @@ const Home = () => {
     }));
   }, [etablissements]);
 
-  const displayedEtabs = showAll ? etabsWithImages : etabsWithImages.slice(0, 6);
+  const displayedEtabs = showAll
+    ? etabsWithImages
+    : etabsWithImages.slice(0, 6);
   const hasMoreEtabs = etabsWithImages.length > 6;
 
   return (
     <>
-      <NavBar />
       <Carousel />
       <div className="min-h-screen w-full overflow-x-hidden px-4 md:px-6 pb-12">
         <div className="max-w-6xl mx-auto py-8">
@@ -75,7 +82,9 @@ const Home = () => {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-16 gap-4">
               <div className="w-12 h-12 border-4 border-slate-200 border-t-emerald-500 rounded-full animate-spin" />
-              <p className="text-slate-600 dark:text-slate-400">Chargement des établissements...</p>
+              <p className="text-slate-600 dark:text-slate-400">
+                Chargement des établissements...
+              </p>
             </div>
           ) : error ? (
             <div className="max-w-md mx-auto text-center py-12 px-6 rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
@@ -97,22 +106,28 @@ const Home = () => {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {displayedEtabs.map((etab, i) => (
-                  <article
+                  <Card
                     key={etab.id}
+                    image={etab.image}
                     onClick={() => navigate(`/details/${etab.id}`)}
-                    className="group relative h-[340px] md:h-[360px] rounded-2xl overflow-hidden bg-cover bg-center cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 animate-[fade-in_0.4s_ease-out]"
-                    style={{ backgroundImage: `url(${etab.image})`, animationDelay: `${i * 0.05}s` }}
+                    className="h-[340px] md:h-[360px]"
                   >
-                    <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm text-amber-600 font-semibold text-sm">
+                    <div className="absolute top-3 right-3 flex items-center gap-1 px-3 py-1 rounded-full bg-white/90 dark:bg-slate-900/80 backdrop-blur-xs text-amber-600 font-semibold text-sm">
                       <HiStar className="w-4 h-4" />
-                      {typeof etab.note === "number" ? etab.note.toFixed(1) : "3.5"}
+                      {typeof etab.note === "number"
+                        ? etab.note.toFixed(1)
+                        : "3.5"}
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 text-white">
-                      <h3 className="text-xl font-bold mb-1 line-clamp-1">{etab.nom}</h3>
+                      <h3 className="text-xl md:text-2xl font-extrabold mb-1 line-clamp-1">
+                        {etab.nom}
+                      </h3>
                       {etab.description && (
-                        <p className="text-sm opacity-90 line-clamp-2 mb-2">
-                          {etab.description.length > 100 ? `${etab.description.slice(0, 100)}...` : etab.description}
+                        <p className="text-sm md:text-base opacity-90 line-clamp-2 mb-2">
+                          {etab.description.length > 100
+                            ? `${etab.description.slice(0, 100)}...`
+                            : etab.description}
                         </p>
                       )}
                       {etab.adresse && (
@@ -130,7 +145,7 @@ const Home = () => {
                         <HiArrowRight className="w-4 h-4" />
                       </Link>
                     </div>
-                  </article>
+                  </Card>
                 ))}
               </div>
 

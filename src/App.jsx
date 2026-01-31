@@ -1,6 +1,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import NavBar from "./components/NavBar/index.jsx";
-
+import { AnimatePresence, motion as Motion } from "framer-motion";
+import { pageVariants, pageTransition } from "./utils/motionVariants";
 import Home from "./components/pages/Home/index.jsx";
 import Details from "./components/pages/Details/index.jsx";
 import Favorites from "./components/pages/Favorie/index.jsx";
@@ -51,55 +52,61 @@ const App = () => {
     <AuthProvider>
       <ErrorBoundary>
         {showNav && <NavBar />}
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-           <Route path="/Addetabs" element={<Addetabs />} />
-           <Route path="/Team" element={<Team />} />
+        <AnimatePresence mode="wait">
+          <Motion.div
+            key={location.pathname}
+            variants={pageVariants}
+            initial="initial"
+            animate="in"
+            exit="out"
+            transition={pageTransition}
+            className="min-h-screen"
+          >
+            <Routes location={location}>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/Addetabs" element={<Addetabs />} />
+              <Route path="/Team" element={<Team />} />
 
-          {/* Routes protégées */}
-          <Route
-            path="/favorites"
-            element={
-              <PrivateRoute>
-                <Favorites />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/add-etabs"
-            element={
-              <PrivateRoute>
-                <Addetabs />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/etablissements"
-            element={
-                <Etablissements />
-            }
-          />
-          <Route
-              path="/etablissements/:id"
-              element={
-                <PrivateRoute>
-                  <Details /> 
-                </PrivateRoute>
-              }
-            />
+              {/* Routes protégées */}
+              <Route
+                path="/favorites"
+                element={
+                  <PrivateRoute>
+                    <Favorites />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/add-etabs"
+                element={
+                  <PrivateRoute>
+                    <Addetabs />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="/etablissements" element={<Etablissements />} />
+              <Route
+                path="/etablissements/:id"
+                element={
+                  <PrivateRoute>
+                    <Details />
+                  </PrivateRoute>
+                }
+              />
 
-            <Route
-              path="/details/:id"
-              element={
-                <PrivateRoute>
-                  <Details />
-                </PrivateRoute>
-              }
-            />
-            
-        </Routes>
+              <Route
+                path="/details/:id"
+                element={
+                  <PrivateRoute>
+                    <Details />
+                  </PrivateRoute>
+                }
+              />
+            </Routes>
+          </Motion.div>
+        </AnimatePresence>
       </ErrorBoundary>
     </AuthProvider>
   );
