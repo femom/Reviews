@@ -1,71 +1,83 @@
 // components/SearchBar/index.jsx
 import React, { useState, useEffect, useRef } from "react";
-import { AnimatePresence, motion as Motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import { HiSearch, HiX } from "react-icons/hi";
-import { fadeInUp } from "../../utils/motionVariants";
-import { IoTimeOutline } from "react-icons/io5";
+import { FiSearch, FiX, FiClock } from "react-icons/fi";
 
-const SearchBar = ({ onSearch, className = "" }) => {
-  const [searchQuery, setSearchQuery] = useState("");
+const SearchBar = ({ onSearch, className = '' }) => {
+  const [searchQuery, setSearchQuery] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [recentSearches, setRecentSearches] = useState([]);
-  const [isMobileView, setIsMobileView] = useState(
-    typeof window !== "undefined" && window.innerWidth <= 768,
-  );
+  const [isMobile, setIsMobile] = useState(false);
   const searchInputRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
   // Récupérer les recherches récentes du localStorage
   useEffect(() => {
-    const savedSearches = localStorage.getItem("recentSearches");
+    const savedSearches = localStorage.getItem('recentSearches');
     if (savedSearches) {
       setRecentSearches(JSON.parse(savedSearches));
     }
   }, []);
 
+  // Réinitialiser la recherche quand on change de page
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    setSearchQuery(params.get("search") || "");
+    const searchParam = params.get('search');
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    } else {
+      setSearchQuery('');
+    }
   }, [location]);
 
+  // Focus sur l'input sur mobile quand le menu s'ouvre
   useEffect(() => {
-    if (isExpanded && searchInputRef.current) searchInputRef.current.focus();
+    if (isExpanded && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
   }, [isExpanded]);
 
   useEffect(() => {
-    const handler = () => setIsMobileView(window.innerWidth <= 768);
-    window.addEventListener("resize", handler);
-    return () => window.removeEventListener("resize", handler);
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // Sauvegarder une recherche récente
   const saveToRecentSearches = (query) => {
     if (!query.trim()) return;
-
+    
     const updatedSearches = [
       query,
-      ...recentSearches.filter((s) => s.toLowerCase() !== query.toLowerCase()),
+      ...recentSearches.filter(s => s.toLowerCase() !== query.toLowerCase())
     ].slice(0, 5); // Garder seulement les 5 dernières
-
+    
     setRecentSearches(updatedSearches);
-    localStorage.setItem("recentSearches", JSON.stringify(updatedSearches));
+    localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
   };
 
   // Gérer la soumission de la recherche
   const handleSearch = (e) => {
     e.preventDefault();
-
+    
     const query = searchQuery.trim();
     if (!query) return;
 
     // Sauvegarder la recherche
     saveToRecentSearches(query);
 
+    // Naviguer vers la page des établissements avec le paramètre de recherche
     navigate(`/etablissements?search=${encodeURIComponent(query)}`);
-    if (isMobileView) setIsExpanded(false);
+
+    // Réduire la barre sur mobile
+    if (isMobile) {
+      setIsExpanded(false);
+    }
+
+    // Fermer les suggestions
     setShowSuggestions(false);
 
     // Appeler le callback parent si fourni
@@ -78,11 +90,11 @@ const SearchBar = ({ onSearch, className = "" }) => {
   const handleSuggestionClick = (suggestion) => {
     setSearchQuery(suggestion);
     setShowSuggestions(false);
-
+    
     // Naviguer directement
     navigate(`/etablissements?search=${encodeURIComponent(suggestion)}`);
     saveToRecentSearches(suggestion);
-
+    
     if (onSearch) {
       onSearch(suggestion);
     }
@@ -90,77 +102,74 @@ const SearchBar = ({ onSearch, className = "" }) => {
 
   // Effacer la recherche
   const handleClearSearch = () => {
-    setSearchQuery("");
+    setSearchQuery('');
     setShowSuggestions(false);
     if (searchInputRef.current) {
       searchInputRef.current.focus();
     }
-
+    
     // Si on est sur la page des établissements, retirer le filtre
-    if (location.pathname === "/etablissements") {
-      navigate("/etablissements");
+    if (location.pathname === '/etablissements') {
+      navigate('/etablissements');
     }
   };
 
+  // Gérer le clic en dehors pour fermer les suggestions
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!event.target.closest(".search-bar-wrapper"))
+      if (searchInputRef.current && !searchInputRef.current.contains(event.target)) {
         setShowSuggestions(false);
+      }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const mockSuggestions = [
-    "Hotel Paris",
-    "Restaurant Italien",
-    "Spa Luxury",
-    "Bar Cocktail",
-    "Café Terrace",
-  ];
+  // Suggestions basées sur la recherche
   const getSuggestions = () => {
-    if (!searchQuery.trim()) return recentSearches;
-    return mockSuggestions.filter((s) =>
-      s.toLowerCase().includes(searchQuery.toLowerCase()),
+    if (!searchQuery.trim()) {
+      return recentSearches;
+    }
+    
+    // Vous pouvez remplacer par des suggestions d'API réelles
+    const mockSuggestions = [
+      'Hotel Paris',
+      'Restaurant Italien',
+      'Spa Luxury',
+      'Bar Cocktail',
+      'Café Terrace'
+    ];
+    
+    return mockSuggestions.filter(suggestion =>
+      suggestion.toLowerCase().includes(searchQuery.toLowerCase())
     );
   };
 
-  const showForm = isExpanded || !isMobileView;
-
-  const suggestionsList = {
-    initial: {},
-    animate: { transition: { staggerChildren: 0.04 } },
-    exit: {},
-  };
-
-  const suggestionItem = {
-    initial: { opacity: 0, y: 6 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: 6 },
-  };
-
   return (
-    <div
-      className={`search-bar-wrapper relative w-full ${className} ${isExpanded && isMobileView ? "fixed inset-0 z-[1002] flex items-center p-4 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl" : ""}`}
-    >
-      {isMobileView && !isExpanded && (
-        <Motion.button
-          type="button"
+      <div className={`relative ${className}`}>
+      {/* Bouton de recherche (mobile seulement) */}
+      {isMobile && !isExpanded && (
+        <button
+          className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/30 text-ink-700 transition hover:bg-white/50"
           onClick={() => setIsExpanded(true)}
           aria-label="Ouvrir la recherche"
-          whileTap={{ scale: 0.95 }}
-          className="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
-          <HiSearch className="w-5 h-5" />
-        </Motion.button>
+          <FiSearch />
+        </button>
       )}
 
-      {showForm && (
-        <form onSubmit={handleSearch} role="search" className="relative w-full">
-          <div className="relative flex items-center rounded-2xl border-2 border-gray-200 dark:border-gray-600 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all duration-200 overflow-hidden">
+      {/* Formulaire de recherche */}
+      {(isExpanded || !isMobile) && (
+        <form 
+          className="glass-soft relative flex w-full max-w-sm items-center gap-2 rounded-2xl px-3 py-2" 
+          onSubmit={handleSearch}
+          role="search"
+        >
+          <div className="flex w-full items-center gap-2" ref={searchInputRef}>
             <input
-              ref={searchInputRef}
               type="text"
+              className="w-full bg-transparent text-sm text-ink-800 placeholder:text-ink-400 focus:outline-none"
               placeholder="Rechercher un établissement..."
               value={searchQuery}
               onChange={(e) => {
@@ -169,95 +178,84 @@ const SearchBar = ({ onSearch, className = "" }) => {
               }}
               onFocus={() => setShowSuggestions(true)}
               aria-label="Rechercher un établissement"
-              className="flex-1 w-full min-w-0 py-2.5 pl-4 pr-2 text-gray-900 dark:text-gray-100 bg-transparent text-base placeholder-gray-500 dark:placeholder-gray-400 outline-none"
             />
+            
+            {/* Bouton d'effacement */}
             {searchQuery && (
               <button
                 type="button"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/40 text-ink-600 hover:bg-white/60"
                 onClick={handleClearSearch}
-                aria-label="Effacer"
-                className="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                aria-label="Effacer la recherche"
               >
-                <HiX className="w-5 h-5" />
+                <FiX />
               </button>
             )}
+            
+            {/* Bouton de recherche */}
             <button
               type="submit"
-              aria-label="Rechercher"
-              className="flex items-center justify-center w-10 h-10 mx-1 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all duration-200"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-ink-600/90 text-white hover:bg-ink-700"
+              aria-label="Lancer la recherche"
             >
-              <HiSearch className="w-5 h-5" />
+              <FiSearch />
             </button>
           </div>
 
-          <AnimatePresence>
-            {showSuggestions && (searchQuery || recentSearches.length > 0) && (
-              <Motion.div
-                variants={suggestionsList}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                transition={{ duration: 0.18 }}
-                className="absolute top-full left-0 right-0 mt-2 py-2 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden z-10 max-h-[280px] overflow-y-auto"
-              >
-                {searchQuery && (
-                  <Motion.button
-                    variants={suggestionItem}
+          {/* Suggestions de recherche */}
+          {showSuggestions && (searchQuery || recentSearches.length > 0) && (
+            <div className="glass-panel absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-2xl text-sm">
+              {searchQuery && (
+                <div
+                  className="flex cursor-pointer items-center gap-2 px-4 py-3 text-ink-800 hover:bg-white/40"
+                  onClick={() => handleSuggestionClick(searchQuery)}
+                >
+                  <FiSearch className="text-ink-500" />
+                  <span>Rechercher "{searchQuery}"</span>
+                </div>
+              )}
+              
+              {getSuggestions().map((suggestion, index) => (
+                <div
+                  key={index}
+                  className="flex cursor-pointer items-center gap-2 px-4 py-3 text-ink-800 hover:bg-white/40"
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  <FiClock className="text-ink-500" />
+                  <span>{suggestion}</span>
+                </div>
+              ))}
+              
+              {recentSearches.length > 0 && (
+                <div className="border-t border-white/30 px-4 py-2">
+                  <button
                     type="button"
-                    onClick={() => handleSuggestionClick(searchQuery)}
-                    className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                    className="text-xs font-medium text-ink-600 hover:text-ink-800"
+                    onClick={() => {
+                      setRecentSearches([]);
+                      localStorage.removeItem('recentSearches');
+                    }}
                   >
-                    <HiSearch className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                    <span className="text-gray-800 dark:text-gray-200">
-                      Rechercher &quot;{searchQuery}&quot;
-                    </span>
-                  </Motion.button>
-                )}
-                {getSuggestions().map((suggestion, index) => (
-                  <Motion.button
-                    variants={suggestionItem}
-                    key={index}
-                    type="button"
-                    onClick={() => handleSuggestionClick(suggestion)}
-                    className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                  >
-                    <IoTimeOutline className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                    <span className="text-gray-800 dark:text-gray-200">
-                      {suggestion}
-                    </span>
-                  </Motion.button>
-                ))}
-                {recentSearches.length > 0 && (
-                  <div className="border-t border-gray-200 dark:border-gray-700 pt-2 mt-1 px-4">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setRecentSearches([]);
-                        localStorage.removeItem("recentSearches");
-                      }}
-                      className="text-sm text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
-                    >
-                      Effacer l&apos;historique
-                    </button>
-                  </div>
-                )}
-              </Motion.div>
-            )}
-          </AnimatePresence>
+                    Effacer l'historique
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </form>
       )}
 
-      {isMobileView && isExpanded && (
+      {/* Bouton de fermeture (mobile seulement) */}
+      {isMobile && isExpanded && (
         <button
-          type="button"
+          className="ml-2 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/30 text-ink-700 hover:bg-white/50"
           onClick={() => {
             setIsExpanded(false);
             setShowSuggestions(false);
           }}
-          aria-label="Fermer"
-          className="absolute top-4 right-4 flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300"
+          aria-label="Fermer la recherche"
         >
-          <HiX className="w-5 h-5" />
+          <FiX />
         </button>
       )}
     </div>

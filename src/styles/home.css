@@ -1,9 +1,10 @@
 /* Styles pour la page Home - Version centrée et responsive */
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
 .home-container {
   width: 100%;
   overflow-x: hidden;
@@ -23,6 +24,7 @@
   padding: 1.5rem 0;
   width: 100%;
   box-sizing: border-box;
+  text-align: center;
 }
 
 .placing h1 {
@@ -32,6 +34,7 @@
   text-align: center;
   font-weight: 700;
   padding: 0 1rem;
+  word-wrap: break-word;
 }
 
 /* Conteneur avec hauteur fixe et défilement */
@@ -55,19 +58,21 @@
 /* Grille centrée */
 .etab-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
   width: 100%;
   max-width: 1200px;
+  margin: 0 auto;
   box-sizing: border-box;
-  justify-items: center; /* Centre les cartes dans chaque cellule */
+  justify-items: center;
+  padding: 0 0.5rem;
 }
 
 /* Correction pour éviter le débordement */
-.etab-grid > * {
+.etab-grid>* {
   max-width: 100%;
   box-sizing: border-box;
-  width: 100%; /* Assure que les cartes prennent toute la largeur disponible */
+  width: 100%;
 }
 
 .etab-card {
@@ -83,7 +88,8 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   width: 100%;
   min-width: 0;
-  max-width: 100%; /* Limite la largeur maximale */
+  max-width: 100%;
+  /* Limite la largeur maximale */
 }
 
 .etab-card:hover {
@@ -114,10 +120,10 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, 
-    rgba(0, 0, 0, 0.9) 0%, 
-    rgba(0, 0, 0, 0.7) 50%, 
-    rgba(0, 0, 0, 0.3) 100%);
+  background: linear-gradient(to top,
+      rgba(0, 0, 0, 0.9) 0%,
+      rgba(0, 0, 0, 0.7) 50%,
+      rgba(0, 0, 0, 0.3) 100%);
   padding: 1.5rem 1rem;
   color: white;
   transform: translateY(0);
@@ -205,7 +211,8 @@
   width: 100%;
 }
 
-.see-more-btn, .see-less-btn {
+.see-more-btn,
+.see-less-btn {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
@@ -220,7 +227,8 @@
   min-width: 200px;
 }
 
-.see-more-btn:hover, .see-less-btn:hover {
+.see-more-btn:hover,
+.see-less-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
@@ -303,8 +311,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error-state {
@@ -361,13 +374,13 @@
   .content-wrapper {
     padding: 0 1rem;
   }
-  
+
   .etab-grid {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.2rem;
     max-width: 900px;
   }
-  
+
   .etab-grid-wrapper {
     max-height: 750px;
   }
@@ -378,45 +391,66 @@
   .home-container {
     padding: 0.5rem;
   }
-  
+
   .content-wrapper {
     padding: 0 0.5rem;
   }
-  
+
   .placing {
     padding: 1rem 0;
+    text-align: center;
   }
-  
+
   .placing h1 {
     font-size: 1.8rem;
     margin-bottom: 1.2rem;
     padding: 0 0.5rem;
+    text-align: center;
   }
-  
+
   .etab-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     max-width: 100%;
+    margin: 0 auto;
+    padding: 0 0.25rem;
   }
-  
+
   .etab-grid-wrapper {
     max-height: 700px;
+    justify-content: center;
   }
-  
+
   .etab-card {
     height: 320px;
   }
-  
+
   .etab-info h3 {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
+    text-align: center;
   }
-  
-  .see-more-btn, .see-less-btn {
+
+  .etab-description {
+    text-align: center;
+  }
+
+  .etab-address {
+    text-align: center;
+  }
+
+  .details-link {
+    display: block;
+    text-align: center;
+    margin: 0.8rem auto 0;
+  }
+
+  .see-more-btn,
+  .see-less-btn {
     padding: 0.7rem 1.5rem;
     font-size: 0.9rem;
     min-width: 180px;
   }
-  
+
   .all-etabs-link {
     padding: 0.7rem 1.5rem;
     font-size: 1rem;
@@ -426,47 +460,100 @@
 
 /* Mobile (max-width: 640px) */
 @media (max-width: 640px) {
-  .etab-grid {
-    grid-template-columns: 1fr; /* Une seule colonne */
-    gap: 0.8rem;
-    max-width: 500px; /* Limite la largeur maximale */
-    margin: 0 auto;
+  .home-container {
+    padding: 0.5rem;
   }
-  
+
+  .content-wrapper {
+    padding: 0 0.5rem;
+  }
+
+  .placing {
+    padding: 0.8rem 0;
+    text-align: center;
+  }
+
+  .placing h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    padding: 0 0.5rem;
+    text-align: center;
+  }
+
+  .etab-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+  }
+
   .etab-grid-wrapper {
     max-height: 650px;
     justify-content: center;
   }
-  
+
   .etab-card {
     height: 300px;
     max-width: 100%;
+    width: 100%;
   }
-  
+
   .etab-info h3 {
-    font-size: 1.2rem;
+    font-size: 1rem;
+    text-align: center;
   }
-  
+
+  .etab-description {
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  .etab-address {
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
   .details-link {
     padding: 0.4rem 0.8rem;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    display: block;
+    text-align: center;
+    margin: 0.6rem auto 0;
   }
-  
+
   .error-state,
   .no-data-state {
-    padding: 2rem 0.5rem;
+    padding: 1.5rem 0.5rem;
     margin: 0 auto;
     width: 95%;
+    text-align: center;
   }
-  
+
   .see-more-container {
     margin: 1.5rem 0;
-    padding: 0.8rem 0;
+    padding: 0.8rem 0.5rem;
+    text-align: center;
   }
-  
+
+  .see-more-btn,
+  .see-less-btn {
+    width: auto;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.8rem;
+    min-width: auto;
+  }
+
   .all-etabs-link-container {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    text-align: center;
+  }
+
+  .all-etabs-link {
+    max-width: 100%;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
   }
 }
 
@@ -475,98 +562,126 @@
   .home-container {
     padding: 0.25rem;
   }
-  
+
   .content-wrapper {
     padding: 0 0.25rem;
   }
-  
+
   .placing h1 {
-    font-size: 1.6rem;
-    padding: 0 0.25rem;
-    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    padding: 0;
+    margin-bottom: 0.8rem;
+    text-align: center;
   }
-  
+
   .etab-grid {
     gap: 0.6rem;
     max-width: 100%;
-    padding: 0 0.5rem;
+    padding: 0;
+    grid-template-columns: 1fr;
   }
-  
+
   .etab-grid-wrapper {
     max-height: 600px;
   }
-  
+
   .etab-card {
     height: 280px;
     width: 100%;
     max-width: 100%;
   }
-  
+
   .etab-overlay {
-    padding: 1rem 0.8rem;
+    padding: 0.8rem 0.6rem;
   }
-  
+
   .etab-info h3 {
-    font-size: 1.1rem;
+    font-size: 1rem;
+    text-align: center;
   }
-  
-  .see-more-btn, .see-less-btn {
-    width: 90%;
-    max-width: 300px;
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
+
+  .etab-description {
+    font-size: 0.75rem;
+    text-align: center;
   }
-  
+
+  .etab-address {
+    font-size: 0.7rem;
+    text-align: center;
+  }
+
+  .details-link {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    margin-top: 0.4rem;
+  }
+
+  .see-more-btn,
+  .see-less-btn {
+    width: auto;
+    max-width: 100%;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.75rem;
+  }
+
   .all-etabs-link {
-    width: 90%;
-    max-width: 300px;
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
+    width: auto;
+    max-width: 100%;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
   }
 }
 
 /* Très petit mobile (max-width: 360px) */
 @media (max-width: 360px) {
   .placing h1 {
-    font-size: 1.4rem;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
   }
-  
+
   .etab-grid {
-    gap: 0.5rem;
-    padding: 0 0.25rem;
+    gap: 0.4rem;
+    padding: 0;
+    grid-template-columns: 1fr;
   }
-  
+
   .etab-card {
-    height: 260px;
+    height: 250px;
   }
-  
+
   .etab-overlay {
-    padding: 0.8rem 0.6rem;
+    padding: 0.6rem 0.4rem;
   }
-  
+
   .etab-info h3 {
-    font-size: 1rem;
+    font-size: 0.95rem;
+    text-align: center;
   }
-  
+
   .etab-description {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
+    text-align: center;
     -webkit-line-clamp: 1;
   }
-  
+
   .etab-address {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
+    text-align: center;
   }
-  
+
   .details-link {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.8rem;
-    margin-top: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+    margin-top: 0.3rem;
   }
-  
-  .see-more-btn, .see-less-btn,
+
+  .see-more-btn,
+  .see-less-btn,
   .all-etabs-link {
-    width: 95%;
-    padding: 0.5rem 0.8rem;
+    width: auto;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.7rem;
   }
 }
 
@@ -578,7 +693,8 @@
 }
 
 /* Assure que tout reste dans les limites de l'écran */
-html, body {
+html,
+body {
   max-width: 100vw;
   overflow-x: hidden;
 }
@@ -597,30 +713,30 @@ html, body {
   .placing h1 {
     color: #e2e8f0;
   }
-  
+
   .see-more-container {
     border-color: #374151;
   }
-  
+
   .all-etabs-link-container {
     border-color: #374151;
   }
-  
+
   .all-etabs-link {
     background: #1f2937;
     color: #e2e8f0;
   }
-  
+
   .error-state {
     background: #2d1f1f;
     border-color: #7b3f3f;
   }
-  
+
   .no-data-state {
     background: #1f2937;
     color: #9ca3af;
   }
-  
+
   .etab-grid-wrapper::after {
     background: linear-gradient(to bottom, transparent, #1f2937);
   }

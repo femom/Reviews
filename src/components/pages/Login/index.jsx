@@ -1,12 +1,9 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+// Login.jsx - VERSION CORRIGÉE
+import React, { useState } from 'react';
 import Topsejour from "../../../assets/images/Topsejour.png";
-import imgBg from "../../../assets/images/img3.jpeg";
-import api from "../../services/api";
-import { HiMail, HiLockClosed, HiArrowRight, HiHome } from "react-icons/hi";
-import { Surface } from "../../ui";
-import { motion as Motion } from "framer-motion";
-import { fadeInUp } from "../../../utils/motionVariants";
+import api from '../../services/api';
+import { Link, useNavigate } from 'react-router-dom';
+import { FiLock, FiMail } from "react-icons/fi";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,29 +12,47 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLoginDirect = async (emailVal, passwordVal) => {
+  // Fonction de connexion directe (sans AuthContext pour debug)
+  const handleLoginDirect = async (email, password) => {
     try {
-      const response = await api.post("/groupe-8/auth/login", {
-        email: emailVal,
-        password: passwordVal,
+      console.log("🔐 Tentative connexion directe...");
+      
+      const response = await api.post('/groupe-8/auth/login', {
+        email,
+        password
       });
+
+      console.log("✅ Réponse API login:", response.data);
+      
+      // VÉRIFIEZ LA STRUCTURE DE LA RÉPONSE
       const token = response.data.access_token || response.data.token;
       const userData = response.data.user || response.data;
+      
+      console.log("Token extrait:", token ? token.substring(0, 20) + '...' : 'NON TROUVÉ');
+      console.log("UserData:", userData);
+      
       if (token && userData) {
-        localStorage.setItem("authToken", token);
-        localStorage.setItem("userId", userData.id || userData.user_id);
-        localStorage.setItem(
-          "userName",
-          userData.name || userData.username || "",
-        );
-        localStorage.setItem("userData", JSON.stringify(userData));
+        // STOCKAGE COMPLET ET COHÉRENT
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('userId', userData.id || userData.user_id);
+        localStorage.setItem('userName', userData.name || userData.username || '');
+        
+        // Vérifiez le stockage
+        console.log("📦 Après stockage:");
+        console.log("- authToken:", localStorage.getItem('authToken') ? "✓" : "✗");
+        console.log("- userId:", localStorage.getItem('userId'));
+        console.log("- userName:", localStorage.getItem('userName'));
+        
         return { success: true, user: userData };
+      } else {
+        console.error("❌ Données manquantes dans la réponse");
+        return { success: false, error: "Structure de réponse invalide" };
       }
-      return { success: false, error: "Structure de réponse invalide" };
-    } catch (err) {
-      return {
-        success: false,
-        error: err.response?.data?.message || "Erreur de connexion",
+    } catch (error) {
+      console.error("❌ Erreur connexion:", error.response?.data || error);
+      return { 
+        success: false, 
+        error: error.response?.data?.message || "Erreur de connexion" 
       };
     }
   };
@@ -45,139 +60,98 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
+
     setError("");
     setLoading(true);
+
     try {
       const result = await handleLoginDirect(email, password);
+      
       if (result.success) {
+        console.log("🎉 Connexion réussie, redirection...");
         navigate("/", { replace: true });
       } else {
         setError(result.error || "Erreur de connexion");
       }
-    } catch {
+    } catch (err) {
+      console.error("Erreur inattendue:", err);
       setError("Une erreur inattendue s'est produite");
     } finally {
       setLoading(false);
     }
   };
 
+  // ... reste du code JSX ...
+
+
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
-      <div
-        className="hidden md:block w-full md:w-1/2 min-h-[40vh] md:min-h-screen bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${imgBg})` }}
-      />
-      <div className="relative w-full md:w-1/2 flex items-center justify-center p-6 md:p-12 bg-slate-50 dark:bg-slate-900">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-500/10 via-transparent to-transparent pointer-events-none" />
-        <div className="relative w-full max-w-md">
-          <Motion.div
-            variants={fadeInUp}
-            initial="initial"
-            animate="animate"
-            exit="exit"
+    <div className="flex min-h-screen items-center justify-center px-4 py-16 sm:px-6 sm:py-20">
+      <div className="glass-panel w-full max-w-md rounded-3xl p-8">
+        <div className="mb-6 flex items-center gap-3">
+          <img src={Topsejour} alt="Logo" className="h-24 w-24 object-contain" />
+          <div>
+            <h2 className="text-2xl font-semibold text-ink-900">Se connecter</h2>
+            <p className="text-sm text-ink-600">Accédez à vos établissements favoris.</p>
+          </div>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-500">Email</label>
+            <div className="flex items-center gap-2 rounded-2xl border border-white/40 bg-white/40 px-4 py-2">
+              <FiMail className="text-ink-500" />
+              <input
+                type="email"
+                className="w-full bg-transparent text-sm text-ink-800 placeholder:text-ink-400 focus:outline-none"
+                placeholder="ex: herika@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={loading}
+                autoComplete="email"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-500">Mot de passe</label>
+            <div className="flex items-center gap-2 rounded-2xl border border-white/40 bg-white/40 px-4 py-2">
+              <FiLock className="text-ink-500" />
+              <input
+                type="password"
+                className="w-full bg-transparent text-sm text-ink-800 placeholder:text-ink-400 focus:outline-none"
+                placeholder="Entrer le mot de passe"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={loading}
+                autoComplete="current-password"
+              />
+            </div>
+          </div>
+
+          {error && (
+            <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs text-rose-600">
+              {error}
+            </div>
+          )}
+
+          <button
+            className="w-full rounded-full bg-ink-700 px-6 py-3 text-sm font-semibold text-white"
+            type="submit"
+            disabled={loading}
           >
-            <Surface className="rounded-3xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-2xl border border-white/20 dark:border-slate-700/50 shadow-2xl shadow-slate-200/50 dark:shadow-black/20 p-8 md:p-10">
-              <div className="flex justify-center mb-8">
-                <img src={Topsejour} alt="Logo" className="h-12 w-auto" />
-              </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white text-center mb-2">
-                Se connecter
-              </h1>
-              <p className="text-slate-500 dark:text-slate-400 text-center text-sm mb-8">
-                Accédez à votre espace en toute sécurité
-              </p>
+            {loading ? "Connexion..." : "Connexion"}
+          </button>
+        </form>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
-                  >
-                    Email
-                  </label>
-                  <div className="relative">
-                    <HiMail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
-                    <input
-                      id="email"
-                      type="email"
-                      placeholder="ex: herika@gmail.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      disabled={loading}
-                      autoComplete="email"
-                      className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all duration-200"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
-                  >
-                    Mot de passe
-                  </label>
-                  <div className="relative">
-                    <HiLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
-                    <input
-                      id="password"
-                      type="password"
-                      placeholder="Entrer le mot de passe"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      disabled={loading}
-                      autoComplete="current-password"
-                      className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all duration-200"
-                    />
-                  </div>
-                </div>
-
-                {error && (
-                  <div className="flex items-center gap-2 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm">
-                    {error}
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5 disabled:opacity-60 disabled:transform-none transition-all duration-200"
-                >
-                  {loading ? (
-                    <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  ) : (
-                    <>
-                      Connexion
-                      <HiArrowRight className="w-5 h-5" />
-                    </>
-                  )}
-                </button>
-              </form>
-
-              <div className="mt-8 space-y-3 text-center text-sm">
-                <p className="text-slate-600 dark:text-slate-400">
-                  Pas de compte ?{" "}
-                  <Link
-                    to="/register"
-                    className="font-semibold text-emerald-600 hover:text-emerald-500 transition-colors"
-                  >
-                    S&apos;inscrire
-                  </Link>
-                </p>
-                <p>
-                  <Link
-                    to="/"
-                    className="inline-flex items-center gap-2 text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
-                  >
-                    <HiHome className="w-4 h-4" />
-                    Retour à l&apos;accueil
-                  </Link>
-                </p>
-              </div>
-            </Surface>
-          </Motion.div>
+        <div className="mt-6 space-y-2 text-center text-xs text-ink-600">
+          <p>
+            Pas de compte ? <Link to="/register" className="font-semibold text-ink-800">S'inscrire</Link>
+          </p>
+          <p>
+            <Link to="/" className="font-semibold text-ink-800">Retour à l'accueil</Link>
+          </p>
         </div>
       </div>
     </div>

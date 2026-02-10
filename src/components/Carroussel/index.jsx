@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
+
 import img1 from "../../assets/images/img1.jpeg";
 import img2 from "../../assets/images/img2.jpeg";
 import img3 from "../../assets/images/img3.jpeg";
@@ -27,7 +27,7 @@ function Carousel() {
   const [index, setIndex] = useState(0);
 
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? "Bonjour" : hour >= 18 ? "Bonsoir" : "Salut";
+  const greeting = hour < 12 ? "Bonjour" : hour >= 18 ? "Bonsoir" : "Salut !";
 
   const next = () => setIndex((i) => (i + 1) % slides.length);
   const prev = () => setIndex((i) => (i - 1 + slides.length) % slides.length);
@@ -45,52 +45,81 @@ function Carousel() {
     : "Découvrir les établissements";
 
   return (
-
-    <section className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-12 grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-8 lg:gap-12 items-center">
-      <div className="pt-[72px] lg:pt-0 flex flex-col">
-        <span className="inline-flex w-fit px-4 py-1.5 rounded-full text-xs font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 mb-4">
+    <section className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-16 pt-36 sm:px-6 md:grid-cols-2">
+      <div data-reveal className="space-y-6 text-center md:text-left reveal-fade-left">
+        <div className="glass-soft inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs uppercase tracking-[0.2em] text-ink-700">
           Séjours • Avis • Confiance
-        </span>
-        <h1 className="text-4xl md:text-5xl font-medium text-slate-500 dark:text-slate-400 mb-2">{greeting}</h1>
-        <h2 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-white leading-tight mb-4">
-          Bienvenue sur <span className="text-emerald-600">Reviews</span>
+        </div>
+
+        <h1 className="text-4xl font-semibold text-ink-900 md:text-5xl dark:text-white">{greeting}</h1>
+        <h2 className="text-4xl font-semibold text-ink-900 md:text-5xl">
+          Bienvenue sur <br />
+          <span className="text-gradient animate-shimmer">Reviews</span>
         </h2>
 
-
-        <p className="text-lg text-slate-600 dark:text-slate-400 max-w-md mb-8 leading-relaxed">
+        <p className="text-base leading-relaxed text-ink-700 dark:text-white/80">
           Une plateforme dédiée à la comparaison d’hôtels et de restaurants,
           basée sur des expériences réelles partagées par la communauté.
         </p>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center md:justify-start">
           <Link to={ctaHref}>
-            <button type="button" onClick={() => navigate(ctaHref)} className="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-bold text-base uppercase tracking-wide shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5 transition-all duration-200">
+            <button
+              className="rounded-full bg-ink-700 px-6 py-3 text-sm font-semibold text-white shadow-glow transition hover:bg-ink-800 hover:shadow-[0_10px_40px_rgba(79,70,229,0.35)]"
+              onClick={() => navigate(ctaHref)}
+            >
               {ctaLabel}
             </button>
           </Link>
-          <span className="text-sm text-slate-500 dark:text-slate-400 italic">
-            Utilisez les flèches ou les points pour changer de slide.
+          <span className="text-xs text-ink-500">
+            Utilise les flèches ou les points pour changer de slide.
           </span>
         </div>
       </div>
 
-      <div className="flex flex-col gap-4">
-        <div className="relative rounded-3xl overflow-hidden h-[320px] md:h-[400px] lg:h-[420px] shadow-2xl shadow-slate-200/50 dark:shadow-black/30 bg-slate-100 dark:bg-slate-800">
-          <img src={slides[index].img} alt={slides[index].title} className="w-full h-full object-cover transition-transform duration-700 ease-out" />
-          <div className="absolute inset-x-0 bottom-0 pt-20 pb-8 px-6 bg-gradient-to-t from-black/80 to-transparent text-white">
-            <div className="text-xl font-bold mb-1">{slides[index].title}</div>
-            <div className="text-sm opacity-90">{slides[index].subtitle}</div>
+      <div data-reveal data-reveal-delay="120ms" className="space-y-4 reveal-fade-right">
+        <div className="glass-card relative mx-auto w-full max-w-md overflow-hidden rounded-3xl p-3 animate-glowPulse md:max-w-none">
+          <img
+            src={slides[index].img}
+            alt={slides[index].title}
+            className="h-80 w-full rounded-2xl object-cover md:h-96"
+          />
+
+          <div className="glass-soft absolute inset-x-6 bottom-6 rounded-2xl px-4 py-3">
+            <div className="text-sm font-semibold text-ink-800">{slides[index].title}</div>
+            <div className="text-xs text-ink-600">{slides[index].subtitle}</div>
           </div>
-          <button type="button" onClick={prev} aria-label="Précédent" className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 dark:bg-slate-800/90 flex items-center justify-center text-slate-800 dark:text-white shadow-lg hover:scale-110 transition-transform duration-200">
-            <HiChevronLeft className="w-6 h-6" />
-          </button>
-          <button type="button" onClick={next} aria-label="Suivant" className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 dark:bg-slate-800/90 flex items-center justify-center text-slate-800 dark:text-white shadow-lg hover:scale-110 transition-transform duration-200">
-            <HiChevronRight className="w-6 h-6" />
-          </button>
+
+          <div className="absolute inset-y-0 left-4 flex items-center">
+            <button
+              className="glass-soft h-10 w-10 rounded-full text-lg font-semibold text-ink-700 hover:bg-white/50"
+              onClick={prev}
+              aria-label="Précédent"
+            >
+              ‹
+            </button>
+          </div>
+          <div className="absolute inset-y-0 right-4 flex items-center">
+            <button
+              className="glass-soft h-10 w-10 rounded-full text-lg font-semibold text-ink-700 hover:bg-white/50"
+              onClick={next}
+              aria-label="Suivant"
+            >
+              ›
+            </button>
+          </div>
         </div>
-        <div className="flex justify-center gap-2">
+
+        <div className="flex items-center justify-center gap-2">
           {slides.map((_, i) => (
-            <button key={i} type="button" onClick={() => setIndex(i)} aria-label={`Slide ${i + 1}`} className={`h-2 rounded-full transition-all duration-300 ${i === index ? "w-8 bg-emerald-500" : "w-2 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400"}`} />
+            <button
+              key={i}
+              className={`h-2.5 w-2.5 rounded-full transition ${
+                i === index ? "bg-ink-700" : "bg-white/50"
+              }`}
+              onClick={() => setIndex(i)}
+              aria-label={`Aller à la slide ${i + 1}`}
+            />
           ))}
         </div>
       </div>

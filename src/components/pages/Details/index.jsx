@@ -1,28 +1,32 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import api from "../../services/api";
-import { useAuth } from "../../context/AuthContext";
-import { fadeInUp, pop } from "../../../utils/motionVariants";
-import "./details.css";
-import { Card, Surface, IconButton, Badge } from "../../ui";
-import PhotoThumbnail from "../../ui/PhotoThumbnail";
-import { thumbnailsList, thumbnailItem } from "../../../utils/motionVariants";
-import { AnimatePresence, motion as Motion } from "framer-motion";
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import api from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import {
-  HiChevronLeft,
-  HiChevronRight,
-  HiHeart,
-  HiPencilAlt,
-  HiTrash,
-  HiCheck,
-  HiX,
-} from "react-icons/hi";
+  FiHeart,
+  FiMapPin,
+  FiPhone,
+  FiMail,
+  FiGlobe,
+  FiEdit2,
+  FiTrash2,
+  FiSave,
+  FiX,
+  FiAlertTriangle,
+  FiCheckCircle,
+  FiXCircle,
+  FiMessageSquare,
+  FiChevronLeft,
+  FiChevronRight,
+  FiStar,
+} from "react-icons/fi";
+import { FaHeart, FaStar } from "react-icons/fa";
 
 function Details() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuth();
-
+  
   const [etablissement, setEtablissement] = useState(null);
   const [favorites, setFavorites] = useState(false);
   const [rating, setRating] = useState(0);
@@ -32,12 +36,12 @@ function Details() {
   const [loading, setLoading] = useState({
     etablissement: true,
     avis: true,
-    images: true,
+    images: true
   });
   const [error, setError] = useState({
     etablissement: null,
     avis: null,
-    images: null,
+    images: null
   });
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
   const [editingReview, setEditingReview] = useState(null);
@@ -49,14 +53,14 @@ function Details() {
 
   // Fonctions de navigation pour les photos
   const nextPhoto = () => {
-    setSelectedPhotoIndex((prev) =>
-      prev === photos.length - 1 ? 0 : prev + 1,
+    setSelectedPhotoIndex((prev) => 
+      prev === photos.length - 1 ? 0 : prev + 1
     );
   };
 
   const prevPhoto = () => {
-    setSelectedPhotoIndex((prev) =>
-      prev === 0 ? photos.length - 1 : prev - 1,
+    setSelectedPhotoIndex((prev) => 
+      prev === 0 ? photos.length - 1 : prev - 1
     );
   };
 
@@ -77,56 +81,50 @@ function Details() {
       <rect width="400" height="300" fill="#f5f5f5"/>
       <rect x="50" y="50" width="300" height="200" fill="#e0e0e0" stroke="#ccc" stroke-width="1"/>
       <text x="200" y="160" font-family="Arial, sans-serif" font-size="16" fill="#666" text-anchor="middle">${text}</text>
-      <text x="200" y="190" font-family="Arial, sans-serif" font-size="14" fill="#999" text-anchor="middle">${etablissement?.nom || ""}</text>
+      <text x="200" y="190" font-family="Arial, sans-serif" font-size="14" fill="#999" text-anchor="middle">${etablissement?.nom || ''}</text>
     </svg>`;
-
+    
     return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svgContent)}`;
   };
 
   // Fonction pour construire l'URL complète de l'image
   const buildImageUrl = (imagePath) => {
     if (!imagePath) return null;
-
+    
     // Si c'est déjà une URL complète
-    if (
-      imagePath.startsWith("http://") ||
-      imagePath.startsWith("https://") ||
-      imagePath.startsWith("data:")
-    ) {
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('data:')) {
       return imagePath;
     }
-
+    
     // Si c'est un chemin relatif
-    if (imagePath.startsWith("/")) {
+    if (imagePath.startsWith('/')) {
       // Récupérer l'URL de base de l'API
-      let baseUrl = "";
-
+      let baseUrl = '';
+      
       if (api.defaults.baseURL) {
-        baseUrl = api.defaults.baseURL.replace(/\/api$/, "");
+        baseUrl = api.defaults.baseURL.replace(/\/api$/, '');
       } else {
         // URL par défaut
         baseUrl = window.location.origin;
       }
-
+      
       return `${baseUrl}${imagePath}`;
     }
-
+    
     return imagePath;
   };
 
   // Fonction pour gérer les erreurs d'image principale
   const handleImageError = async (e, photoIndex) => {
-    console.warn(
-      `Image échouée à l'index ${photoIndex}, utilisation du fallback`,
-    );
-
+    console.warn(`Image échouée à l'index ${photoIndex}, utilisation du fallback`);
+    
     const photo = photos[photoIndex];
     if (!photo) return;
-
+    
     // Utiliser directement l'image fallback
     e.target.src = getFallbackImage("Image non disponible");
     e.target.onerror = null; // Éviter les boucles infinies
-
+    
     // Marquer cette image comme fallback dans l'état
     if (!photo.isFallback) {
       const updatedPhotos = [...photos];
@@ -134,7 +132,7 @@ function Details() {
         ...photo,
         url: getFallbackImage("Image non disponible"),
         originalUrl: photo.url, // Conserver l'URL originale
-        isFallback: true,
+        isFallback: true
       };
       setPhotos(updatedPhotos);
     }
@@ -145,7 +143,7 @@ function Details() {
     console.warn(`Miniature échouée à l'index ${index}`);
     e.target.src = getFallbackImage("X");
     e.target.onerror = null;
-
+    
     // Marquer comme fallback
     if (photos[index] && !photos[index].isFallback) {
       const updatedPhotos = [...photos];
@@ -153,7 +151,7 @@ function Details() {
         ...photos[index],
         url: getFallbackImage("X"),
         originalUrl: photos[index].url,
-        isFallback: true,
+        isFallback: true
       };
       setPhotos(updatedPhotos);
     }
@@ -162,52 +160,50 @@ function Details() {
   // Fonction pour prélire les images
   const preloadImages = async (imageUrls) => {
     const results = [];
-
+    
     for (let i = 0; i < imageUrls.length; i++) {
       const url = imageUrls[i];
       const fullUrl = buildImageUrl(url);
-
+      
       if (loadedImages.current.has(fullUrl)) {
         results.push({ url: fullUrl, exists: true });
         continue;
       }
-
+      
       try {
         const exists = await checkImageExists(fullUrl);
         loadedImages.current.add(fullUrl);
-        results.push({
-          url: fullUrl,
+        results.push({ 
+          url: fullUrl, 
           exists,
-          fallbackUrl: exists
-            ? fullUrl
-            : getFallbackImage("Image non disponible"),
+          fallbackUrl: exists ? fullUrl : getFallbackImage("Image non disponible")
         });
       } catch (error) {
         console.error(`Erreur préchargement image ${i}:`, error);
-        results.push({
-          url: fullUrl,
+        results.push({ 
+          url: fullUrl, 
           exists: false,
-          fallbackUrl: getFallbackImage("Image non disponible"),
+          fallbackUrl: getFallbackImage("Image non disponible")
         });
       }
     }
-
+    
     return results;
   };
 
   // ============ FONCTIONS D'AUTHENTIFICATION ============
-
+  
   const getAuthToken = () => {
-    return localStorage.getItem("token") || localStorage.getItem("authToken");
+    return localStorage.getItem('token') || localStorage.getItem('authToken');
   };
 
   const getUserId = () => {
     if (user && user.id) {
       return parseInt(user.id);
     }
-
-    const userStr = localStorage.getItem("user");
-    if (userStr && userStr !== "undefined" && userStr !== "null") {
+    
+    const userStr = localStorage.getItem('user');
+    if (userStr && userStr !== 'undefined' && userStr !== 'null') {
       try {
         const userData = JSON.parse(userStr);
         return userData.id ? parseInt(userData.id) : null;
@@ -216,8 +212,8 @@ function Details() {
         return null;
       }
     }
-
-    const userId = localStorage.getItem("userId");
+    
+    const userId = localStorage.getItem('userId');
     return userId ? parseInt(userId) : null;
   };
 
@@ -225,26 +221,24 @@ function Details() {
     if (user && user.name) {
       return user.name;
     }
-
-    const userStr = localStorage.getItem("user");
-    if (userStr && userStr !== "undefined" && userStr !== "null") {
+    
+    const userStr = localStorage.getItem('user');
+    if (userStr && userStr !== 'undefined' && userStr !== 'null') {
       try {
         const userData = JSON.parse(userStr);
-        return (
-          userData.name || userData.email || userData.username || "Utilisateur"
-        );
+        return userData.name || userData.email || userData.username || "Utilisateur";
       } catch (e) {
         console.error("Erreur parsing user pour nom:", e);
       }
     }
-
-    return localStorage.getItem("userName") || "Utilisateur";
+    
+    return localStorage.getItem('userName') || "Utilisateur";
   };
 
   const checkAuthentication = () => {
     const token = getAuthToken();
     const contextAuth = isAuthenticated ? isAuthenticated() : false;
-
+    
     return token || contextAuth;
   };
 
@@ -257,19 +251,19 @@ function Details() {
       }
     };
 
-    window.addEventListener("favoritesUpdated", handleFavoritesUpdate);
-
+    window.addEventListener('favoritesUpdated', handleFavoritesUpdate);
+    
     return () => {
-      window.removeEventListener("favoritesUpdated", handleFavoritesUpdate);
+      window.removeEventListener('favoritesUpdated', handleFavoritesUpdate);
     };
   }, []);
 
   const handleAddReview = async () => {
     console.log("🔄 Début handleAddReview");
-
+    
     if (!checkAuthentication()) {
       alert("Veuillez vous connecter pour ajouter un avis.");
-      navigate("/login");
+      navigate('/login');
       return;
     }
 
@@ -277,7 +271,7 @@ function Details() {
       alert("Veuillez écrire un avis.");
       return;
     }
-
+    
     if (rating === 0) {
       alert("Veuillez attribuer une note.");
       return;
@@ -289,53 +283,56 @@ function Details() {
         commentaire: newReview,
         note: rating,
         etablissement_id: parseInt(id),
-        user_id: userId,
+        user_id: userId
       };
-
+      
       console.log("📤 Envoi avis avec données:", reviewData);
-
+      
       let endpoint;
-
-      if (api.defaults.baseURL && api.defaults.baseURL.endsWith("/api")) {
+      
+      if (api.defaults.baseURL && api.defaults.baseURL.endsWith('/api')) {
         endpoint = `/groupe-8/etablissements/${id}/avis`;
       } else {
         endpoint = `/api/groupe-8/etablissements/${id}/avis`;
       }
-
+      
       console.log("Endpoint utilisé:", endpoint);
-
+      
       const response = await api.post(endpoint, reviewData);
-
+      
       console.log("✅ Réponse API:", response.data);
-
+      
       const responseData = response.data;
-
+      
       const newReviewObj = {
-        id: responseData.id || responseData.data?.id || Date.now(),
+        id: responseData.id || 
+            responseData.data?.id || 
+            Date.now(),
         user: {
           id: userId,
-          name: getUserName(),
+          name: getUserName()
         },
         user_id: userId,
         commentaire: newReview,
         note: rating,
         created_at: new Date().toISOString(),
-        ...(responseData.data || {}),
+        ...(responseData.data || {})
       };
-
+      
       console.log("Nouvel avis créé:", newReviewObj);
-
-      setReviews((prev) => [newReviewObj, ...prev]);
-
+      
+      setReviews(prev => [newReviewObj, ...prev]);
+      
       setNewReview("");
       setRating(0);
-
+      
       await fetchAvis();
-
-      alert("✅ Votre avis a été ajouté avec succès!");
+      
+      alert("Votre avis a été ajouté avec succès!");
+      
     } catch (err) {
       console.error("❌ Erreur ajout avis:", err.response || err);
-
+      
       if (err.response) {
         switch (err.response.status) {
           case 401:
@@ -343,51 +340,44 @@ function Details() {
             if (logout) {
               logout();
             } else {
-              localStorage.removeItem("token");
-              localStorage.removeItem("authToken");
-              localStorage.removeItem("user");
-              localStorage.removeItem("userId");
+              localStorage.removeItem('token');
+              localStorage.removeItem('authToken');
+              localStorage.removeItem('user');
+              localStorage.removeItem('userId');
             }
-            navigate("/login");
+            navigate('/login');
             break;
-
+            
           case 403:
-            alert("🚫 Vous n'avez pas la permission d'ajouter un avis.");
+            alert("Vous n'avez pas la permission d'ajouter un avis.");
             break;
-
+            
           case 404:
-            alert("❌ Route non trouvée. Contactez l'administrateur.");
+            alert("Route non trouvée. Contactez l'administrateur.");
             break;
-
+            
           case 422:
             const errors = err.response.data.errors;
             if (errors) {
-              alert(
-                "❌ Erreurs de validation:\n" +
-                  Object.values(errors).flat().join("\n"),
-              );
+              alert("Erreurs de validation:\n" + 
+                Object.values(errors).flat().join("\n"));
             } else {
-              alert("❌ " + (err.response.data.message || "Données invalides"));
+              alert((err.response.data.message || "Données invalides"));
             }
             break;
-
+            
           case 500:
-            const errorMessage = err.response.data?.message || "";
-            alert("❌ Erreur serveur: " + errorMessage);
+            const errorMessage = err.response.data?.message || '';
+            alert("Erreur serveur: " + errorMessage);
             break;
-
+            
           default:
-            alert(
-              "⚠️ Erreur: " +
-                (err.response.data?.message || "Veuillez réessayer."),
-            );
+            alert("Erreur: " + (err.response.data?.message || "Veuillez réessayer."));
         }
       } else if (err.request) {
-        alert(
-          "🌐 Pas de réponse du serveur. Vérifiez votre connexion internet.",
-        );
+        alert("Pas de réponse du serveur. Vérifiez votre connexion internet.");
       } else {
-        alert("❌ Erreur: " + err.message);
+        alert("Erreur: " + err.message);
       }
     }
   };
@@ -395,7 +385,7 @@ function Details() {
   const handleUpdateReview = async (reviewId) => {
     if (!checkAuthentication()) {
       alert("Veuillez vous connecter pour modifier votre avis.");
-      navigate("/login");
+      navigate('/login');
       return;
     }
 
@@ -403,7 +393,7 @@ function Details() {
       alert("Veuillez écrire un avis.");
       return;
     }
-
+    
     if (editReviewRating === 0) {
       alert("Veuillez attribuer une note.");
       return;
@@ -413,17 +403,17 @@ function Details() {
       const reviewData = {
         commentaire: editReviewText,
         note: editReviewRating,
-        _method: "PUT",
+        _method: 'PUT'
       };
-
+      
       await api.post(`/groupe-8/avis/${reviewId}`, reviewData);
-
+      
       await fetchAvis();
-
+      
       setEditingReview(null);
       setEditReviewText("");
       setEditReviewRating(0);
-      alert("✅ Votre avis a été modifié avec succès!");
+      alert("Votre avis a été modifié avec succès!");
     } catch (err) {
       console.error("Erreur modification avis:", err);
       handleApiError(err);
@@ -433,7 +423,7 @@ function Details() {
   const handleDeleteReview = async (reviewId) => {
     if (!checkAuthentication()) {
       alert("Veuillez vous connecter pour supprimer votre avis.");
-      navigate("/login");
+      navigate('/login');
       return;
     }
 
@@ -443,10 +433,10 @@ function Details() {
 
     try {
       await api.delete(`/groupe-8/avis/${reviewId}`);
-
+      
       await fetchAvis();
-
-      alert("✅ Votre avis a été supprimé avec succès!");
+      
+      alert("Votre avis a été supprimé avec succès!");
     } catch (err) {
       console.error("Erreur suppression avis:", err);
       handleApiError(err);
@@ -459,15 +449,13 @@ function Details() {
       if (logout) {
         logout();
       } else {
-        localStorage.removeItem("token");
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("user");
+        localStorage.removeItem('token');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
       }
-      navigate("/login");
+      navigate('/login');
     } else {
-      alert(
-        "Erreur: " + (err.response?.data?.message || "Veuillez réessayer."),
-      );
+      alert("Erreur: " + (err.response?.data?.message || "Veuillez réessayer."));
     }
   };
 
@@ -488,25 +476,22 @@ function Details() {
   // Récupérer les détails de l'établissement
   useEffect(() => {
     const fetchEtablissement = async () => {
-      setLoading((prev) => ({ ...prev, etablissement: true }));
+      setLoading(prev => ({...prev, etablissement: true}));
       try {
         const res = await api.get(`/groupe-8/etablissements/${id}`);
         setEtablissement(res.data.data || res.data);
-        setError((prev) => ({ ...prev, etablissement: null }));
-
-        const favoritesList = JSON.parse(
-          localStorage.getItem("favorites") || "[]",
-        );
+        setError(prev => ({...prev, etablissement: null}));
+        
+        const favoritesList = JSON.parse(localStorage.getItem('favorites') || '[]');
         setFavorites(favoritesList.includes(id));
       } catch (err) {
         console.error("Erreur récupération établissement:", err);
-        setError((prev) => ({
-          ...prev,
-          etablissement:
-            "Impossible de récupérer les détails de l'établissement.",
+        setError(prev => ({
+          ...prev, 
+          etablissement: "Impossible de récupérer les détails de l'établissement."
         }));
       } finally {
-        setLoading((prev) => ({ ...prev, etablissement: false }));
+        setLoading(prev => ({...prev, etablissement: false}));
       }
     };
     fetchEtablissement();
@@ -515,8 +500,8 @@ function Details() {
   // Récupérer et précharger les images
   useEffect(() => {
     const fetchAndProcessImages = async () => {
-      setLoading((prev) => ({ ...prev, images: true }));
-
+      setLoading(prev => ({...prev, images: true}));
+      
       try {
         // D'abord, essayer l'endpoint d'images
         let imagesData = [];
@@ -524,34 +509,30 @@ function Details() {
           const res = await api.get(`/groupe-8/etablissements/${id}/images`);
           imagesData = res.data.data || res.data || [];
         } catch (apiError) {
-          console.warn(
-            "API images échouée, essai des images de l'établissement",
-          );
+          console.warn("API images échouée, essai des images de l'établissement");
           // Si l'API échoue, utiliser les images de l'établissement
           if (etablissement?.images?.length > 0) {
-            imagesData = etablissement.images.map((img) => ({ url: img }));
+            imagesData = etablissement.images.map(img => ({ url: img }));
           }
         }
 
         // Si aucune image n'est disponible, créer un fallback
         if (imagesData.length === 0) {
           const fallbackImage = {
-            url: getFallbackImage(
-              etablissement?.nom || "Aucune image disponible",
-            ),
-            isFallback: true,
+            url: getFallbackImage(etablissement?.nom || "Aucune image disponible"),
+            isFallback: true
           };
           setPhotos([fallbackImage]);
-          setError((prev) => ({ ...prev, images: null }));
+          setError(prev => ({...prev, images: null}));
           return;
         }
 
         // Extraire les URLs des images
-        const imageUrls = imagesData.map((img) => img.url || img);
-
+        const imageUrls = imagesData.map(img => img.url || img);
+        
         // Précharger et vérifier les images
         const preloadedResults = await preloadImages(imageUrls);
-
+        
         // Transformer les résultats en objets photo
         const processedPhotos = preloadedResults.map((result, index) => {
           const originalImage = imagesData[index];
@@ -560,38 +541,34 @@ function Details() {
             url: result.exists ? result.url : result.fallbackUrl,
             originalUrl: result.url,
             isFallback: !result.exists,
-            exists: result.exists,
+            exists: result.exists
           };
         });
 
         setPhotos(processedPhotos);
-        setError((prev) => ({ ...prev, images: null }));
+        setError(prev => ({...prev, images: null}));
+        
+        console.log(`✅ ${processedPhotos.filter(p => p.exists).length}/${processedPhotos.length} images chargées avec succès`);
 
-        console.log(
-          `✅ ${processedPhotos.filter((p) => p.exists).length}/${processedPhotos.length} images chargées avec succès`,
-        );
       } catch (err) {
         console.error("Erreur traitement images:", err);
-
+        
         // En cas d'erreur, utiliser un fallback
         const fallbackImage = {
-          url: getFallbackImage(
-            etablissement?.nom || "Erreur chargement images",
-          ),
-          isFallback: true,
+          url: getFallbackImage(etablissement?.nom || "Erreur chargement images"),
+          isFallback: true
         };
         setPhotos([fallbackImage]);
-
-        setError((prev) => ({
-          ...prev,
-          images:
-            "Impossible de charger les images. Utilisation des images de secours.",
+        
+        setError(prev => ({
+          ...prev, 
+          images: "Impossible de charger les images. Utilisation des images de secours."
         }));
       } finally {
-        setLoading((prev) => ({ ...prev, images: false }));
+        setLoading(prev => ({...prev, images: false}));
       }
     };
-
+    
     if (id && etablissement) {
       fetchAndProcessImages();
     }
@@ -599,20 +576,20 @@ function Details() {
 
   // Fonction pour récupérer les avis
   const fetchAvis = async () => {
-    setLoading((prev) => ({ ...prev, avis: true }));
+    setLoading(prev => ({...prev, avis: true}));
     try {
       const res = await api.get(`/groupe-8/etablissements/${id}/avis`);
       const avisData = res.data.data || res.data || [];
       setReviews(avisData);
-      setError((prev) => ({ ...prev, avis: null }));
+      setError(prev => ({...prev, avis: null}));
     } catch (err) {
       console.error("Erreur récupération avis:", err);
-      setError((prev) => ({
-        ...prev,
-        avis: "Impossible de charger les avis.",
+      setError(prev => ({
+        ...prev, 
+        avis: "Impossible de charger les avis."
       }));
     } finally {
-      setLoading((prev) => ({ ...prev, avis: false }));
+      setLoading(prev => ({...prev, avis: false}));
     }
   };
 
@@ -628,9 +605,9 @@ function Details() {
   const toggleFavorite = () => {
     const newFavStatus = !favorites;
     setFavorites(newFavStatus);
-
-    const favoritesList = JSON.parse(localStorage.getItem("favorites") || "[]");
-
+    
+    const favoritesList = JSON.parse(localStorage.getItem('favorites') || '[]');
+    
     if (newFavStatus) {
       if (!favoritesList.includes(id)) {
         favoritesList.push(id);
@@ -641,483 +618,400 @@ function Details() {
         favoritesList.splice(index, 1);
       }
     }
-
-    localStorage.setItem("favorites", JSON.stringify(favoritesList));
-
-    window.dispatchEvent(
-      new CustomEvent("favoritesUpdated", {
-        detail: { id, isFavorite: newFavStatus },
-      }),
-    );
+    
+    localStorage.setItem('favorites', JSON.stringify(favoritesList));
+    
+    window.dispatchEvent(new CustomEvent('favoritesUpdated', { 
+      detail: { id, isFavorite: newFavStatus }
+    }));
   };
 
   // ============ RENDER ============
 
   if (loading.etablissement && !etablissement) {
     return (
-      <Motion.div
-        variants={pop}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        className="details-wrapper"
-      >
+      <div className="details-wrapper">
         <div className="loading-container">
           <div className="loading-spinner"></div>
           <p className="loading-text">Chargement des détails...</p>
         </div>
-      </Motion.div>
+      </div>
     );
   }
 
   // Calculer la note moyenne
-  const averageRating =
-    reviews.length > 0
-      ? (
-          reviews.reduce((sum, review) => sum + (review.note || 0), 0) /
-          reviews.length
-        ).toFixed(1)
-      : "0.0";
+  const averageRating = reviews.length > 0
+    ? (reviews.reduce((sum, review) => sum + (review.note || 0), 0) / reviews.length).toFixed(1)
+    : "0.0";
 
   // Vérifier si l'utilisateur a déjà posté un avis
   const currentUserId = getUserId();
-  const userHasReviewed = currentUserId
-    ? reviews.some(
-        (review) =>
-          review.user_id === currentUserId || review.user?.id === currentUserId,
+  const userHasReviewed = currentUserId 
+    ? reviews.some(review => 
+        review.user_id === currentUserId || 
+        review.user?.id === currentUserId
       )
     : false;
 
   return (
-    <Motion.div
-      variants={fadeInUp}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      className="details-wrapper"
-    >
-      {/* Indicateur d'authentification */}
-      <div
-        style={{
-          position: "fixed",
-          top: "10px",
-          left: "10px",
-          background: checkAuthentication() ? "#28a745" : "#dc3545",
-          color: "white",
-          padding: "5px 10px",
-          borderRadius: "5px",
-          zIndex: 1000,
-          fontSize: "12px",
-        }}
-      >
-        {checkAuthentication()
-          ? `✅ Connecté (${getUserName()})`
-          : "❌ Déconnecté"}
+    <div className="mx-auto max-w-6xl space-y-8 px-4 pb-20 pt-28 sm:space-y-10 sm:px-6 sm:pb-24 sm:pt-36">
+      <div className="fixed left-3 top-3 z-50 flex items-center gap-2 rounded-full bg-slate-900/80 px-3 py-1.5 text-[11px] text-white backdrop-blur animate-fadeUp sm:left-4 sm:top-4 sm:px-4 sm:py-2 sm:text-xs">
+        {checkAuthentication() ? (
+          <>
+            <FiCheckCircle className="text-emerald-400" />
+            <span>Connecté ({getUserName()})</span>
+          </>
+        ) : (
+          <>
+            <FiXCircle className="text-rose-400" />
+            <span>Déconnecté</span>
+          </>
+        )}
       </div>
 
-      {/* En-tête */}
-      <div className="details-header">
-        <div className="details-header-content">
-          <div className="details-header-info">
-            <h2 className="details-title">
-              {etablissement?.nom || "Nom non disponible"}
-            </h2>
-            <div className="details-meta">
-              <Badge className="details-type-badge">
+      <section data-reveal className="glass-panel rounded-3xl p-6 md:p-8 animate-fadeUp text-ink-900 dark:text-white">
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 className="text-3xl font-semibold text-ink-900 dark:text-white">{etablissement?.nom || "Nom non disponible"}</h2>
+            <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-ink-600 dark:text-white/80">
+              <span className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-ink-700 dark:bg-slate-900/60 dark:text-white/80">
                 {etablissement?.type || "Type inconnu"}
-              </Badge>
-              <div className="details-rating-display">
-                <span className="details-average-rating">{averageRating}</span>
-                <div className="details-stars-static">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <span
-                      key={i}
-                      className={
-                        i <= averageRating
-                          ? "details-star filled"
-                          : "details-star"
-                      }
-                    >
-                      ★
-                    </span>
-                  ))}
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-semibold text-ink-900 dark:text-white">{averageRating}</span>
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map((i) =>
+                    i <= averageRating ? (
+                      <FaStar key={i} className="text-amber-400" />
+                    ) : (
+                      <FiStar key={i} className="text-amber-300" />
+                    )
+                  )}
                 </div>
-                <Badge className="details-review-count">
-                  {reviews.length} avis
-                </Badge>
+                <span className="text-xs text-ink-500 dark:text-white/70">({reviews.length} avis)</span>
               </div>
             </div>
           </div>
 
-          <div className="details-header-actions">
-            <div className="flex items-center gap-3">
-              <IconButton
-                onClick={toggleFavorite}
-                aria-label={
-                  favorites ? "Retirer des favoris" : "Ajouter aux favoris"
-                }
-                className={favorites ? "bg-red-500 text-white" : ""}
-              >
-                <HiHeart className="w-4 h-4" />
-              </IconButton>
-              <span className="text-sm">
-                {favorites ? "Favori" : "Ajouter aux favoris"}
-              </span>
-            </div>
+          <div className="flex flex-col gap-4 md:items-end">
+            <button
+              className="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm font-semibold text-ink-700 hover:bg-white/90 dark:bg-slate-900/60 dark:text-white/80 dark:hover:bg-slate-800/70"
+              onClick={toggleFavorite}
+              title={favorites ? "Retirer des favoris" : "Ajouter aux favoris"}
+            >
+              {favorites ? <FaHeart className="text-rose-500" /> : <FiHeart />}
+              <span>{favorites ? "Favori" : "Ajouter aux favoris"}</span>
+            </button>
 
-            {/* Notation interactive pour nouvel avis */}
-            <div className="details-rating-widget">
-              <p className="rating-label">Votre note :</p>
-              <div className="details-stars-interactive">
+            <div className="glass-soft rounded-2xl px-4 py-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-500 dark:text-white/70">Votre note</p>
+              <div className="mt-2 flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map((i) => (
                   <button
                     key={i}
-                    className={`details-star-btn ${i <= rating ? "active" : ""}`}
+                    className={`rounded-full p-1 ${i <= rating ? "text-amber-400" : "text-amber-200"}`}
                     onClick={() => setRating(i)}
                     title={`Noter ${i} étoile${i > 1 ? "s" : ""}`}
                   >
-                    ★
+                    {i <= rating ? <FaStar /> : <FiStar />}
                   </button>
                 ))}
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Galerie de photos avec gestion améliorée */}
-      <div className="details-photos-section">
-        <div className="section-header">
-          <h3 className="section-title">Galerie photos</h3>
+      <section data-reveal data-reveal-delay="120ms" className="glass-panel rounded-3xl p-6 text-ink-900 dark:text-white">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-lg font-semibold">Galerie photos</h3>
           {photos.length > 0 && (
-            <span className="photo-count">
+            <span className="text-xs text-ink-500 dark:text-white/70">
               {photos.length} photo{photos.length > 1 ? "s" : ""}
-              {photos.some((p) => p.isFallback) &&
-                " (certaines non disponibles)"}
+              {photos.some((p) => p.isFallback) && " (certaines non disponibles)"}
             </span>
           )}
         </div>
 
         {loading.images ? (
-          <div className="photos-loading">
-            <div className="loading-spinner small"></div>
+          <div className="flex items-center gap-3 text-sm text-ink-600 dark:text-white/80">
+            <div className="h-3 w-3 animate-pulse rounded-full bg-ink-500" />
             <p>Chargement des photos...</p>
           </div>
         ) : (
           <>
-            <div className="main-photo-container">
+            <div className="relative overflow-hidden rounded-2xl">
               {photos.length > 0 ? (
                 <>
-                  <AnimatePresence mode="wait">
-                    <Motion.img
-                      key={`main-${selectedPhotoIndex}`}
-                      src={photos[selectedPhotoIndex]?.url}
-                      alt={`Photo ${selectedPhotoIndex + 1} de ${etablissement?.nom}`}
-                      className="main-photo"
-                      initial={{ opacity: 0, scale: 0.98 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.98 }}
-                      transition={{ duration: 0.28 }}
-                      onError={(e) => handleImageError(e, selectedPhotoIndex)}
-                      loading="lazy"
-                      whileHover={{ scale: 1.02 }}
-                    />
-                  </AnimatePresence>
+                  <img
+                    key={`main-${selectedPhotoIndex}`}
+                    src={photos[selectedPhotoIndex]?.url}
+                    alt={`Photo ${selectedPhotoIndex + 1} de ${etablissement?.nom}`}
+                    className="h-[320px] w-full object-cover md:h-[420px]"
+                    onError={(e) => handleImageError(e, selectedPhotoIndex)}
+                    loading="lazy"
+                  />
 
                   {photos.length > 1 && (
                     <>
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          prevPhoto();
-                        }}
+                      <button
+                        className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/70 p-2 text-ink-700 hover:bg-white/90 dark:bg-slate-900/60 dark:text-white/80 dark:hover:bg-slate-800/70"
+                        onClick={prevPhoto}
                         aria-label="Photo précédente"
-                        className="absolute left-3 top-1/2 -translate-y-1/2 z-30 bg-white/90 dark:bg-slate-800/80"
                       >
-                        <HiChevronLeft className="w-4 h-4" />
-                      </IconButton>
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          nextPhoto();
-                        }}
+                        <FiChevronLeft />
+                      </button>
+                      <button
+                        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/70 p-2 text-ink-700 hover:bg-white/90 dark:bg-slate-900/60 dark:text-white/80 dark:hover:bg-slate-800/70"
+                        onClick={nextPhoto}
                         aria-label="Photo suivante"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 z-30 bg-white/90 dark:bg-slate-800/80"
                       >
-                        <HiChevronRight className="w-4 h-4" />
-                      </IconButton>
+                        <FiChevronRight />
+                      </button>
 
-                      <div className="photo-counter">
+                      <div className="absolute bottom-3 right-3 flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs text-ink-700 dark:bg-slate-900/70 dark:text-white/80">
                         {selectedPhotoIndex + 1} / {photos.length}
                         {photos[selectedPhotoIndex]?.isFallback && (
-                          <span
-                            className="fallback-indicator"
-                            title="Image non disponible"
-                          >
-                            ⚠️
-                          </span>
+                          <FiAlertTriangle className="text-amber-500" />
                         )}
                       </div>
                     </>
                   )}
                 </>
               ) : (
-                <div className="no-photos-main">
+                <div className="relative">
                   <img
                     src={getFallbackImage("Aucune photo disponible")}
                     alt="Aucune photo disponible"
-                    className="main-photo"
+                    className="h-[320px] w-full object-cover md:h-[420px]"
                   />
-                  <div className="no-photos-overlay">
-                    <p>Aucune photo disponible pour cet établissement</p>
+                  <div className="absolute inset-0 flex items-center justify-center bg-slate-950/30 text-sm text-white">
+                    Aucune photo disponible pour cet établissement
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Miniatures */}
             {photos.length > 1 && (
-              <Motion.div
-                className="photo-thumbnails grid grid-flow-col gap-2 overflow-x-auto py-2"
-                variants={thumbnailsList}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-              >
+              <div className="mt-4 grid grid-cols-4 gap-3 md:grid-cols-6">
                 {photos.map((photo, index) => (
-                  <Motion.div variants={thumbnailItem} key={`thumb-${index}`}>
-                    <PhotoThumbnail
+                  <button
+                    key={`thumb-${index}`}
+                    className={`relative overflow-hidden rounded-xl border ${
+                      index === selectedPhotoIndex ? "border-ink-500" : "border-transparent"
+                    }`}
+                    onClick={() => setSelectedPhotoIndex(index)}
+                    aria-label={`Voir la photo ${index + 1}`}
+                  >
+                    <img
                       src={photo.url}
                       alt={`Miniature ${index + 1}`}
-                      isActive={index === selectedPhotoIndex}
-                      isFallback={photo.isFallback}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedPhotoIndex(index);
-                      }}
+                      onError={(e) => handleThumbnailError(e, index)}
+                      loading="lazy"
+                      className="h-20 w-full object-cover"
                     />
-                  </Motion.div>
+                    {photo.isFallback && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-slate-900/40 text-white">
+                        <FiAlertTriangle />
+                      </div>
+                    )}
+                  </button>
                 ))}
-              </Motion.div>
+              </div>
             )}
 
             {error.images && (
-              <div className="photos-warning">
-                <p>⚠️ {error.images}</p>
+              <div className="mt-4 flex items-center gap-2 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:bg-amber-500/10 dark:text-amber-200">
+                <FiAlertTriangle />
+                {error.images}
               </div>
             )}
           </>
         )}
-      </div>
+      </section>
 
-      {/* Description */}
-      <div className="details-description-section">
-        <h3 className="section-title">Description</h3>
-        <div className="description-content">
-          <p>
-            {etablissement?.description ||
-              "Pas de description disponible pour cet établissement."}
-          </p>
-        </div>
-      </div>
+      <section data-reveal data-reveal-delay="180ms" className="glass-panel rounded-3xl p-6 text-ink-900 dark:text-white">
+        <h3 className="text-lg font-semibold">Description</h3>
+        <p className="mt-3 text-sm text-ink-600 dark:text-white/80">
+          {etablissement?.description || "Pas de description disponible pour cet établissement."}
+        </p>
+      </section>
 
-      {/* Informations supplémentaires */}
-      <div className="details-info-grid">
+      <section data-reveal data-reveal-delay="240ms" className="grid gap-4 md:grid-cols-2">
         {etablissement?.adresse && (
-          <Surface className="info-card">
-            <span className="info-icon">📍</span>
+          <div className="glass-soft flex items-start gap-3 rounded-2xl p-4 text-ink-900 dark:text-white">
+            <FiMapPin className="mt-1 text-ink-600 dark:text-white/70" />
             <div>
-              <h4>Adresse</h4>
-              <p>{etablissement.adresse}</p>
+              <h4 className="text-sm font-semibold">Adresse</h4>
+              <p className="text-sm text-ink-600 dark:text-white/80">{etablissement.adresse}</p>
             </div>
-          </Surface>
+          </div>
         )}
-
         {etablissement?.telephone && (
-          <Surface className="info-card">
-            <span className="info-icon">📞</span>
+          <div className="glass-soft flex items-start gap-3 rounded-2xl p-4 text-ink-900 dark:text-white">
+            <FiPhone className="mt-1 text-ink-600 dark:text-white/70" />
             <div>
-              <h4>Téléphone</h4>
-              <p>{etablissement.telephone}</p>
+              <h4 className="text-sm font-semibold">Téléphone</h4>
+              <p className="text-sm text-ink-600 dark:text-white/80">{etablissement.telephone}</p>
             </div>
-          </Surface>
+          </div>
         )}
-
         {etablissement?.email && (
-          <Surface className="info-card">
-            <span className="info-icon">✉️</span>
+          <div className="glass-soft flex items-start gap-3 rounded-2xl p-4 text-ink-900 dark:text-white">
+            <FiMail className="mt-1 text-ink-600 dark:text-white/70" />
             <div>
-              <h4>Email</h4>
-              <p>{etablissement.email}</p>
+              <h4 className="text-sm font-semibold">Email</h4>
+              <p className="text-sm text-ink-600 dark:text-white/80">{etablissement.email}</p>
             </div>
-          </Surface>
+          </div>
         )}
-
         {etablissement?.site_web && (
-          <Surface className="info-card">
-            <span className="info-icon">🌐</span>
+          <div className="glass-soft flex items-start gap-3 rounded-2xl p-4 text-ink-900 dark:text-white">
+            <FiGlobe className="mt-1 text-ink-600 dark:text-white/70" />
             <div>
-              <h4>Site Web</h4>
+              <h4 className="text-sm font-semibold">Site Web</h4>
               <a
                 href={etablissement.site_web}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="text-sm text-ink-600 hover:text-ink-800 dark:text-white/80 dark:hover:text-white"
               >
                 {etablissement.site_web}
               </a>
             </div>
-          </Surface>
+          </div>
         )}
-      </div>
+      </section>
 
-      {/* Avis des utilisateurs */}
-      <div className="details-reviews-section">
-        <div className="section-header">
-          <h3 className="section-title">Avis des utilisateurs</h3>
+      <section data-reveal data-reveal-section data-reveal-delay="300ms" className="glass-panel rounded-3xl p-6 text-ink-900 dark:text-white">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-lg font-semibold">Avis des utilisateurs</h3>
           {!userHasReviewed && checkAuthentication() && (
             <button
-              className="add-review-toggle inline-flex items-center gap-2"
+              className="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-xs font-semibold text-ink-700 hover:bg-white/90 dark:bg-slate-900/60 dark:text-white/80 dark:hover:bg-slate-800/70"
               onClick={() => {
-                const form = document.querySelector(".add-review-form");
+                const form = document.querySelector("#add-review-form");
                 if (form) {
                   form.scrollIntoView({ behavior: "smooth" });
                 }
               }}
             >
-              <HiPencilAlt className="w-4 h-4" />
-              <span>Donner mon avis</span>
+              <FiMessageSquare />
+              Donner mon avis
             </button>
           )}
         </div>
 
         {loading.avis ? (
-          <div className="reviews-loading">
-            <div className="loading-spinner small"></div>
+          <div className="flex items-center gap-3 text-sm text-ink-600 dark:text-white/80">
+            <div className="h-3 w-3 animate-pulse rounded-full bg-ink-500" />
             <p>Chargement des avis...</p>
           </div>
         ) : error.avis ? (
-          <div className="reviews-error">
-            <p>{error.avis}</p>
+          <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600 dark:border-rose-400/30 dark:bg-rose-500/10 dark:text-rose-200">
+            {error.avis}
           </div>
         ) : reviews.length === 0 ? (
-          <div className="no-reviews">
-            <p>
-              😔 Aucun avis pour le moment.
-              {checkAuthentication()
-                ? " Soyez le premier à donner votre avis!"
-                : " Connectez-vous pour donner votre avis!"}
-            </p>
+          <div className="rounded-2xl bg-white/50 px-4 py-6 text-sm text-ink-600 dark:bg-slate-900/50 dark:text-white/80">
+            Aucun avis pour le moment.
+            {checkAuthentication()
+              ? " Soyez le premier à donner votre avis!"
+              : " Connectez-vous pour donner votre avis!"}
           </div>
         ) : (
-          <div className="reviews-grid">
+          <div className="grid gap-4 md:grid-cols-2">
             {reviews.map((review) => (
-              <Card key={review.id} className="review-card p-4">
-                <div className="review-header">
-                  <div className="reviewer-info">
-                    <span className="reviewer-avatar">
+              <div key={review.id} className="glass-soft rounded-2xl p-4 text-ink-900 dark:text-white">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-ink-600 text-sm font-semibold text-white dark:bg-aurora-500">
                       {review.user?.name?.charAt(0) || "A"}
-                    </span>
+                    </div>
                     <div>
-                      <strong className="reviewer-name">
+                      <strong className="block text-sm">
                         {review.user?.name || "Anonyme"}
                       </strong>
-                      <span className="review-date">
-                        {new Date(review.created_at).toLocaleDateString(
-                          "fr-FR",
-                        )}
+                      <span className="text-xs text-ink-500 dark:text-white/70">
+                        {new Date(review.created_at).toLocaleDateString("fr-FR")}
                       </span>
                     </div>
                   </div>
-                  <div className="review-actions">
-                    <div className="review-stars">
-                      {"★".repeat(review.note || 0)}
-                      {"☆".repeat(5 - (review.note || 0))}
-                      <span className="review-rating">
-                        {review.note || 0}/5
-                      </span>
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="flex items-center gap-1 text-amber-400">
+                      {[1, 2, 3, 4, 5].map((i) =>
+                        i <= (review.note || 0) ? <FaStar key={i} /> : <FiStar key={i} />
+                      )}
+                      <span className="ml-2 text-xs text-ink-500 dark:text-white/70">{review.note || 0}/5</span>
                     </div>
 
-                    {/* Boutons d'action pour l'utilisateur connecté */}
-                    {checkAuthentication() &&
-                      review.user_id === currentUserId && (
-                        <div className="review-buttons">
-                          {editingReview === review.id ? (
-                            <>
-                              <IconButton
-                                onClick={() => handleUpdateReview(review.id)}
-                                aria-label="Enregistrer"
-                                className="save-btn"
-                              >
-                                <HiCheck className="w-4 h-4" />
-                              </IconButton>
-                              <IconButton
-                                onClick={cancelEditing}
-                                aria-label="Annuler"
-                                className="cancel-btn"
-                              >
-                                <HiX className="w-4 h-4" />
-                              </IconButton>
-                            </>
-                          ) : (
-                            <>
-                              <IconButton
-                                onClick={() => startEditing(review)}
-                                aria-label="Modifier"
-                                title="Modifier"
-                                className="edit-btn"
-                              >
-                                <HiPencilAlt className="w-4 h-4" />
-                              </IconButton>
-                              <IconButton
-                                onClick={() => handleDeleteReview(review.id)}
-                                aria-label="Supprimer"
-                                title="Supprimer"
-                                className="delete-btn"
-                              >
-                                <HiTrash className="w-4 h-4" />
-                              </IconButton>
-                            </>
-                          )}
-                        </div>
-                      )}
+                    {checkAuthentication() && review.user_id === currentUserId && (
+                      <div className="flex items-center gap-2">
+                        {editingReview === review.id ? (
+                          <>
+                            <button
+                              className="rounded-full bg-emerald-500/90 p-2 text-white"
+                              onClick={() => handleUpdateReview(review.id)}
+                            >
+                              <FiSave />
+                            </button>
+                            <button className="rounded-full bg-white/70 p-2 dark:bg-slate-900/60" onClick={cancelEditing}>
+                              <FiX />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              className="rounded-full bg-white/70 p-2 text-ink-700 dark:bg-slate-900/60 dark:text-white/80"
+                              onClick={() => startEditing(review)}
+                              title="Modifier"
+                            >
+                              <FiEdit2 />
+                            </button>
+                            <button
+                              className="rounded-full bg-rose-500/90 p-2 text-white"
+                              onClick={() => handleDeleteReview(review.id)}
+                              title="Supprimer"
+                            >
+                              <FiTrash2 />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {/* Mode édition */}
                 {editingReview === review.id ? (
-                  <div className="edit-review-form">
+                  <div className="mt-4 space-y-3">
                     <textarea
-                      className="edit-review-textarea"
+                      className="w-full rounded-2xl border border-white/40 bg-white/40 px-4 py-2 text-sm text-ink-700 focus:outline-none"
                       value={editReviewText}
                       onChange={(e) => setEditReviewText(e.target.value)}
                       rows={3}
                     />
-                    <div className="edit-rating">
+                    <div className="flex items-center gap-2 text-amber-400">
                       {[1, 2, 3, 4, 5].map((i) => (
                         <button
                           key={i}
-                          className={`edit-rating-star ${i <= editReviewRating ? "selected" : ""}`}
+                          className={`rounded-full p-1 ${i <= editReviewRating ? "text-amber-400" : "text-amber-200"}`}
                           onClick={() => setEditReviewRating(i)}
                         >
-                          ★
+                          {i <= editReviewRating ? <FaStar /> : <FiStar />}
                         </button>
                       ))}
-                      <span className="edit-rating-value">
-                        {editReviewRating}/5
-                      </span>
+                      <span className="text-xs text-ink-500">{editReviewRating}/5</span>
                     </div>
                   </div>
                 ) : (
-                  <p className="review-comment">{review.commentaire}</p>
+                  <p className="mt-4 text-sm text-ink-600 dark:text-white/80">{review.commentaire}</p>
                 )}
-              </Card>
+              </div>
             ))}
           </div>
         )}
 
-        {/* Formulaire d'ajout d'avis */}
-        <div className="add-review-form" id="add-review-form">
-          <h4 className="form-title">
+        <div className="mt-6 rounded-2xl bg-white/50 p-5 dark:bg-slate-900/50" id="add-review-form">
+          <h4 className="text-sm font-semibold">
             {checkAuthentication()
               ? userHasReviewed
                 ? "Vous avez déjà donné votre avis"
@@ -1126,43 +1020,43 @@ function Details() {
           </h4>
 
           {!checkAuthentication() ? (
-            <div className="login-prompt">
+            <div className="mt-3 flex flex-col gap-3 text-sm text-ink-600 dark:text-white/80 sm:flex-row sm:items-center sm:justify-between">
               <p>Vous devez être connecté pour ajouter un avis.</p>
-              <button className="login-btn" onClick={() => navigate("/login")}>
+              <button
+                className="rounded-full bg-ink-700 px-5 py-2 text-xs font-semibold text-white"
+                onClick={() => navigate("/login")}
+              >
                 Se connecter
               </button>
             </div>
           ) : userHasReviewed ? (
-            <div className="already-reviewed">
-              <p>
-                ✅ Vous avez déjà partagé votre expérience sur cet
-                établissement.
-              </p>
-              <p>Merci pour votre contribution!</p>
+            <div className="mt-3 text-sm text-ink-600 dark:text-white/80">
+              <p>Vous avez déjà partagé votre expérience sur cet établissement.</p>
+              <p>Merci pour votre contribution.</p>
             </div>
           ) : (
             <>
-              <div className="form-group">
-                <label>Votre note :</label>
-                <div className="rating-input">
+              <div className="mt-4">
+                <label className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-500 dark:text-white/70">Votre note</label>
+                <div className="mt-2 flex items-center gap-2 text-amber-400">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <button
                       key={i}
-                      className={`rating-star ${i <= rating ? "selected" : ""}`}
+                      className={`rounded-full p-1 ${i <= rating ? "text-amber-400" : "text-amber-200"}`}
                       onClick={() => setRating(i)}
                       type="button"
                       title={`${i} étoile${i > 1 ? "s" : ""}`}
                     >
-                      ★
+                      {i <= rating ? <FaStar /> : <FiStar />}
                     </button>
                   ))}
-                  <span className="rating-value">{rating}/5</span>
+                  <span className="text-xs text-ink-500 dark:text-white/70">{rating}/5</span>
                 </div>
               </div>
 
-              <div className="form-group">
+              <div className="mt-4">
                 <textarea
-                  className="review-textarea"
+                  className="w-full rounded-2xl border border-white/40 bg-white/40 px-4 py-3 text-sm text-ink-700 placeholder:text-ink-400 focus:outline-none dark:border-slate-700/40 dark:bg-slate-900/40 dark:text-white/80 dark:placeholder:text-white/40"
                   value={newReview}
                   onChange={(e) => setNewReview(e.target.value)}
                   placeholder="Partagez votre expérience... Que recommandez-vous ? Qu'avez-vous aimé ?"
@@ -1171,7 +1065,7 @@ function Details() {
               </div>
 
               <button
-                className="submit-review-btn"
+                className="mt-4 inline-flex items-center gap-2 rounded-full bg-ink-700 px-6 py-3 text-sm font-semibold text-white"
                 onClick={handleAddReview}
                 disabled={!newReview.trim() || rating === 0}
               >
@@ -1180,8 +1074,8 @@ function Details() {
             </>
           )}
         </div>
-      </div>
-    </Motion.div>
+      </section>
+    </div>
   );
 }
 

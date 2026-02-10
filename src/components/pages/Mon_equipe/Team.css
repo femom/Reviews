@@ -1,129 +1,331 @@
 .team-page {
-    background-color: #f8fafc;
-    padding: 100px 20px;
-    min-height: 100vh;
-    font-family: 'Inter', sans-serif;
-    text-align: center;
+  background-color: #f8fafc;
+  padding: 100px 20px;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+}
+
+.team-header {
+  max-width: 700px;
+  margin: 0 auto 60px auto;
+}
+
+.team-badge {
+  color: #1e7f4d;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  background: rgba(30, 127, 77, 0.1);
+  padding: 6px 15px;
+  border-radius: 99px;
+  text-align: center;
+  display: inline-block;
+}
+
+.team-header h1 {
+  font-size: 3rem;
+  color: #0f172a;
+  margin-top: 20px;
+  letter-spacing: -1.5px;
+  text-align: center;
+}
+
+.team-header h1 span {
+  color: #1e7f4d;
+}
+
+.team-header p {
+  color: #64748b;
+  font-size: 1.1rem;
+  margin-top: 15px;
+  text-align: center;
+}
+
+/* La Grille */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+/* La Carte */
+.team-card {
+  background: #ffffff;
+  border-radius: 30px;
+  padding: 10px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  margin: 0 auto;
+  width: 100%;
+  max-width: 350px;
+}
+
+.team-card:hover {
+  transform: translateY(-15px);
+  box-shadow: 0 20px 60px rgba(30, 127, 77, 0.1);
+}
+
+.card-top {
+  height: 250px;
+  overflow: hidden;
+  border-radius: 25px;
+  margin-bottom: 20px;
+}
+
+.card-top img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.team-card:hover .card-top img {
+  transform: scale(1.1);
+}
+
+.card-info h3 {
+  font-size: 1.4rem;
+  color: #0f172a;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.member-role {
+  color: #1e7f4d;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.member-bio {
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  padding: 0 15px;
+  text-align: center;
+}
+
+.member-socials {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.member-socials span {
+  width: 35px;
+  height: 35px;
+  background: #f1f5f9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.member-socials span:hover {
+  background: #1e7f4d;
+  color: #fff;
+}
+
+/* Tablette */
+@media (max-width: 1024px) {
+  .team-page {
+    padding: 80px 20px;
   }
-  
+
   .team-header {
-    max-width: 700px;
-    margin: 0 auto 60px auto;
+    margin-bottom: 50px;
   }
-  
-  .team-badge {
-    color: #1e7f4d;
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    background: rgba(30, 127, 77, 0.1);
-    padding: 6px 15px;
-    border-radius: 99px;
-  }
-  
+
   .team-header h1 {
-    font-size: 3rem;
-    color: #0f172a;
-    margin-top: 20px;
-    letter-spacing: -1.5px;
+    font-size: 2.5rem;
   }
-  
-  .team-header h1 span {
-    color: #1e7f4d;
-  }
-  
+
   .team-header p {
-    color: #64748b;
-    font-size: 1.1rem;
+    font-size: 1rem;
+  }
+
+  .team-grid {
+    gap: 30px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .team-page {
+    padding: 60px 15px;
+  }
+
+  .team-header {
+    margin-bottom: 40px;
+  }
+
+  .team-header h1 {
+    font-size: 2rem;
     margin-top: 15px;
   }
-  
-  /* La Grille */
+
+  .team-header p {
+    font-size: 0.95rem;
+    margin-top: 12px;
+  }
+
   .team-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 40px;
-    max-width: 1100px;
-    margin: 0 auto;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    padding: 0;
   }
-  
-  /* La Carte */
+
   .team-card {
-    background: #ffffff;
-    border-radius: 30px;
-    padding: 10px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.03);
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-    border: 1px solid rgba(0,0,0,0.02);
+    max-width: 100%;
   }
-  
-  .team-card:hover {
-    transform: translateY(-15px);
-    box-shadow: 0 20px 60px rgba(30, 127, 77, 0.1);
-  }
-  
+
   .card-top {
-    height: 250px;
-    overflow: hidden;
-    border-radius: 25px;
-    margin-bottom: 20px;
-  }
-  
-  .card-top img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-  }
-  
-  .team-card:hover .card-top img {
-    transform: scale(1.1);
-  }
-  
-  .card-info h3 {
-    font-size: 1.4rem;
-    color: #0f172a;
-    margin-bottom: 5px;
-  }
-  
-  .member-role {
-    color: #1e7f4d;
-    font-weight: 600;
-    font-size: 0.9rem;
-    display: block;
+    height: 220px;
     margin-bottom: 15px;
   }
-  
+
+  .card-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+  }
+
+  .member-role {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+
   .member-bio {
-    color: #64748b;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    padding: 0 15px;
+    font-size: 0.85rem;
+    padding: 0 10px;
   }
-  
+
   .member-socials {
-    margin: 20px 0;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
+    gap: 12px;
+    margin: 15px 0;
   }
-  
+
   .member-socials span {
-    width: 35px;
-    height: 35px;
-    background: #f1f5f9;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+  }
+}
+
+/* Petit mobile */
+@media (max-width: 480px) {
+  .team-page {
+    padding: 40px 10px;
+  }
+
+  .team-header {
+    margin-bottom: 30px;
+  }
+
+  .team-header h1 {
+    font-size: 1.6rem;
+    margin-top: 12px;
+    letter-spacing: -0.5px;
+  }
+
+  .team-header p {
+    font-size: 0.9rem;
+    margin-top: 10px;
+  }
+
+  .team-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0;
+  }
+
+  .team-card {
+    max-width: 100%;
+    padding: 8px;
+    border-radius: 20px;
+  }
+
+  .card-top {
+    height: 200px;
+    border-radius: 18px;
+    margin-bottom: 12px;
+  }
+
+  .card-info h3 {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+
+  .member-role {
     font-size: 0.8rem;
-    cursor: pointer;
-    transition: 0.3s;
+    margin-bottom: 10px;
   }
-  
-  .member-socials span:hover {
-    background: #1e7f4d;
-    color: #fff;
+
+  .member-bio {
+    font-size: 0.8rem;
+    padding: 0 8px;
+    line-height: 1.4;
   }
+
+  .member-socials {
+    gap: 10px;
+    margin: 12px 0;
+  }
+
+  .member-socials span {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7rem;
+  }
+}
+
+/* Très petit mobile */
+@media (max-width: 360px) {
+  .team-page {
+    padding: 30px 8px;
+  }
+
+  .team-header {
+    margin-bottom: 25px;
+  }
+
+  .team-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .team-header p {
+    font-size: 0.85rem;
+  }
+
+  .team-card {
+    max-width: 100%;
+  }
+
+  .card-top {
+    height: 180px;
+  }
+
+  .card-info h3 {
+    font-size: 1rem;
+  }
+
+  .member-role {
+    font-size: 0.75rem;
+  }
+
+  .member-bio {
+    font-size: 0.75rem;
+  }
+}

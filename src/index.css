@@ -1,125 +1,273 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Design tokens (global CSS variables) */
-:root {
-  --brand-indigo: 79 70 229;
-  /* rgb */
-  --brand-violet: 124 58 237;
-  --brand-cyan: 6 182 212;
-  --brand-emerald: 16 185 129;
+@layer base {
 
-  /* Page / typography tokens as RGB components (used with rgb() / rgba()) */
-  --page-bg: 248 250 252;
-  /* light: slate-50 */
-  --page-text: 31 41 55;
-  /* light: slate-800 */
+  html,
+  body {
+    height: 100%;
+  }
 
-  /* Glassmorphism tokens (use with rgba(var(--glass-bg), var(--glass-alpha))) */
-  --glass-bg: 255 255 255;
-  /* white */
-  --glass-alpha: 0.10;
-  /* default glass alpha (10%) */
-  --glass-border: rgba(255, 255, 255, 0.05);
+  body {
+    font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    color: #161c19;
+    background: radial-gradient(1200px 700px at 12% -12%, rgba(61, 185, 99, 0.28), transparent 60%),
+      radial-gradient(900px 500px at 88% 12%, rgba(39, 143, 75, 0.22), transparent 55%),
+      radial-gradient(800px 500px at 50% 100%, rgba(248, 250, 252, 0.9), transparent 60%),
+      linear-gradient(180deg, #e7ebe8 0%, #f8fafc 45%, #e7ebe8 100%);
+    overflow-x: hidden;
+  }
 
-  --shadow-soft: 0 8px 30px rgba(15, 23, 42, 0.06);
-  --shadow-strong: 0 14px 45px rgba(15, 23, 42, 0.12);
+  #root {
+    min-height: 100%;
+    width: 100%;
+  }
 
-  --radius-lg: 12px;
-  --radius-md: 8px;
+  .dark body {
+    color: #e6ebe8;
+    background: radial-gradient(1200px 700px at 12% -12%, rgba(39, 143, 75, 0.18), transparent 60%),
+      radial-gradient(900px 500px at 88% 12%, rgba(15, 19, 17, 0.6), transparent 55%),
+      linear-gradient(180deg, #0f1311 0%, #151b18 45%, #0f1311 100%);
+  }
+
+  /* Responsive text sizing */
+  h1,
+  h2,
+  h3,
+  h4 {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Responsive padding and margins */
+  @media (max-width: 768px) {
+    body {
+      font-size: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    body {
+      font-size: 14px;
+    }
+  }
 }
 
-/* Dark mode overrides (Tailwind toggles the .dark class) */
-.dark {
-  --page-bg: 15 23 42;
-  /* slate-900 */
-  --page-text: 241 245 249;
-  /* slate-100 */
+@layer components {
+  .glass-panel {
+    @apply bg-white/25 backdrop-blur-xl border border-white/30 shadow-glass;
+  }
 
-  /* For dark glass surfaces we base on dark background */
-  --glass-bg: 15 23 42;
-  --glass-alpha: 0.08;
-  --glass-border: rgba(255, 255, 255, 0.04);
-}
+  .glass-card {
+    @apply bg-white/35 backdrop-blur-lg border border-white/40 shadow-glass;
+  }
 
-/* Subtle utilities used across the app */
-.component-surface {
-  /* Keep non-color utilities via @apply, but use CSS variables for colors */
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  /* explicit backdrop blur to avoid relying on a generated utility inside @apply */
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  background-color: rgba(var(--glass-bg), var(--glass-alpha));
-  border: 1px solid var(--glass-border);
-}
+  .glass-soft {
+    @apply bg-white/25 backdrop-blur-md border border-white/30;
+  }
 
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  /* gap-2 */
-  padding: 0.5rem 1rem;
-  /* py-2 px-4 */
-  border-radius: 0.375rem;
-  /* rounded-md */
-  font-weight: 600;
-  /* font-semibold */
-  transition: all 200ms;
-  /* duration-200 */
-  color: #fff;
-  background: linear-gradient(90deg, rgba(var(--brand-emerald), 1) 0%, rgba(var(--brand-violet), 0.9) 100%);
-  box-shadow: var(--shadow-strong);
-}
+  .dark .glass-panel {
+    @apply bg-slate-900/50 border-slate-700/40;
+  }
 
-/* Motion helpers */
-.fade-in {
-  animation: fade-in 200ms ease-out both;
-}
+  .dark .glass-card {
+    @apply bg-slate-900/55 border-slate-700/40;
+  }
 
-.slide-in {
-  animation: slide-in 220ms cubic-bezier(.2, .9, .2, 1) both;
-}
+  .dark .glass-soft {
+    @apply bg-slate-900/40 border-slate-700/40;
+  }
 
-@keyframes fade-in {
-  from {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-[length:200%_200%] bg-gradient-to-r from-ink-700 via-aurora-500 to-aurora-300;
+  }
+
+  .nav-link-underline {
+    @apply relative;
+  }
+
+  .nav-link-underline::after {
+    content: "";
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: -6px;
+    height: 2px;
+    border-radius: 9999px;
+    background: currentColor;
     opacity: 0;
+    transform: scaleX(0.2);
+    transform-origin: center;
+    transition: transform 220ms ease, opacity 220ms ease;
   }
 
-  to {
-    opacity: 1;
+  .nav-link-underline:hover::after {
+    opacity: 0.9;
+    transform: scaleX(1);
   }
 }
 
-@keyframes slide-in {
-  from {
+@layer utilities {
+  .mask-fade {
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0));
+  }
+
+  .bg-aurora {
+    background-image:
+      radial-gradient(700px 400px at 20% 10%, rgba(106, 212, 126, 0.25), transparent 60%),
+      radial-gradient(500px 300px at 80% 0%, rgba(61, 185, 99, 0.22), transparent 60%),
+      linear-gradient(120deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1));
+  }
+
+  .theme-wave {
+    position: fixed;
+    inset: -30%;
+    z-index: 9999;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.0) 55%),
+      radial-gradient(circle at 65% 55%, rgba(167, 243, 208, 0.35) 0%, rgba(255, 255, 255, 0.0) 60%);
     opacity: 0;
-    transform: translateY(8px);
+    transform: scale(0.15);
+    animation: themeWave 1500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
+  .dark .theme-wave {
+    background:
+      radial-gradient(circle at 35% 35%, rgba(6, 10, 8, 0.95) 0%, rgba(6, 10, 8, 0.0) 55%),
+      radial-gradient(circle at 65% 55%, rgba(39, 143, 75, 0.25) 0%, rgba(6, 10, 8, 0.0) 60%);
+  }
+}
+
+/* Dark-mode overrides for Tailwind `text-ink-*` utilities to ensure readable text
+   without changing every component class. These rules intentionally increase
+   contrast for darker `ink` shades when `.dark` is present on an ancestor. */
+.dark .text-ink-900,
+.dark .text-ink-800,
+.dark .text-ink-700,
+.dark .text-ink-600 {
+  color: #e6ebe8 !important;
+}
+
+.dark ::placeholder {
+  color: #c7d1cb !important;
+}
+
+@keyframes themeWave {
+  0% {
+    opacity: 0.85;
+    transform: scale(0.15) rotate(0deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(3.1) rotate(18deg);
+  }
+}
+
+/* Scroll reveal animations */
+@media (prefers-reduced-motion: reduce) {
+
+  .reveal,
+  .reveal * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(14px) scale(0.995);
+  will-change: opacity, transform;
+  transition: opacity 520ms cubic-bezier(.22, .9, .29, 1), transform 520ms cubic-bezier(.22, .9, .29, 1);
+}
+
+.reveal--visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* sparkline animation */
+.sparkline polyline {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: sparkDraw 900ms ease-out forwards;
+}
+
+@keyframes sparkDraw {
   to {
-    opacity: 1;
-    transform: translateY(0);
+    stroke-dashoffset: 0;
   }
 }
 
-html {
-  scroll-behavior: smooth;
+/* Slow train-style marquee for cards */
+.marquee-track {
+  animation: marqueeMove 60s ease-in-out infinite;
+  will-change: transform;
 }
 
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: rgb(var(--page-text));
-  background-color: rgb(var(--page-bg));
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+@keyframes marqueeMove {
+  0% {
+    transform: translateX(0);
+  }
+
+  10% {
+    transform: translateX(-6%);
+  }
+
+  18% {
+    transform: translateX(-6%);
+  }
+
+  35% {
+    transform: translateX(-18%);
+  }
+
+  43% {
+    transform: translateX(-18%);
+  }
+
+  62% {
+    transform: translateX(-32%);
+  }
+
+  70% {
+    transform: translateX(-32%);
+  }
+
+  88% {
+    transform: translateX(-46%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
-.safe-top {
-  padding-top: env(safe-area-inset-top, 0);
+/* Faster, softer reveal on mobile for perceived smoothness */
+@media (max-width: 768px) {
+  .reveal {
+    transform: translateY(10px) scale(0.996);
+    transition: opacity 420ms cubic-bezier(.22, .9, .29, 1), transform 420ms cubic-bezier(.22, .9, .29, 1);
+  }
 }
 
-.safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 0);
+/* stagger helpers when JS sets inline --reveal-delay */
+.reveal[style*="--reveal-delay"] {
+  transition-delay: var(--reveal-delay);
+}
+
+.reveal-fade-left {
+  transform: translateX(-18px) scale(0.995);
+}
+
+.reveal-fade-right {
+  transform: translateX(18px) scale(0.995);
+}
+
+.reveal-zoom {
+  transform: translateY(6px) scale(0.98);
 }
