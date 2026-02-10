@@ -15,6 +15,7 @@ import { AuthProvider } from "./components/context/AuthContext.jsx";
 
 // ErrorBoundary simple
 import React, { useEffect } from "react";
+import { logger } from "./utils/logger.js";
 import initScrollReveal from "./utils/scrollReveal";
 
 class ErrorBoundary extends React.Component {
@@ -26,7 +27,7 @@ class ErrorBoundary extends React.Component {
     return { hasError: true };
   }
   componentDidCatch(error, info) {
-    console.error("ErrorBoundary caught:", error, info);
+    logger.error("ErrorBoundary caught:", error, info);
   }
   render() {
     if (this.state.hasError) {

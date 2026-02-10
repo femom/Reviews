@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Topsejour from "../../../assets/images/Topsejour.png";
 import api from '../../services/api';
 import { FiUser, FiMail, FiLock } from "react-icons/fi";
+import { logger } from "../../../utils/logger.js";
 
 function Register() {
   const [name, setName] = useState('');
@@ -43,8 +44,7 @@ function Register() {
     setLoading(true);
 
     try {
-      console.log('🚀 Tentative d\'inscription...');
-      console.log('📦 Données:', { name, email, password: '***', role });
+      logger.info("Register attempt");
       
       const response = await api.post(
         `/groupe-${groupeId}/auth/register`,
@@ -57,14 +57,14 @@ function Register() {
         }
       );
 
-      console.log("✅ Inscription réussie", response.data);
+      logger.info("Register success");
       
       setTimeout(() => {
         window.location.href = "/login";
       }, 1500);
       
     } catch (err) {
-      console.error("❌ Erreur inscription complète :", {
+      logger.error("Register error:", {
         message: err.message,
         response: err.response?.data,
         status: err.response?.status

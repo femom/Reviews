@@ -4,6 +4,7 @@ import api from "../../services/api";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { FiHeart, FiMapPin, FiStar, FiEdit, FiTrash2, FiAlertTriangle, FiX } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
+import { logger } from "../../../utils/logger.js";
 
 function Etablissement({ title }) {
   // --- ÉTATS ---
@@ -51,23 +52,15 @@ function Etablissement({ title }) {
     // Combiner toutes les méthodes
     const adminStatus = isAdminFromLocalStorage || isAdminFromContext || isAdminFromUserName;
     
-    console.log("🔐 Détermination du statut admin:", {
-      userNameFromStorage: userName,
-      isAdminFromLocalStorage,
-      roleFromContext: role,
-      userFromContext: user,
-      isAdminFromContext,
-      isAdminFromUserName,
-      finalAdminStatus: adminStatus
-    });
+    logger.info("Admin status resolved");
     
     setIsAdmin(adminStatus);
     
     // Log pour debug
     if (adminStatus) {
-      console.log("✅ Utilisateur identifié comme ADMIN");
+      logger.info("User identified as admin");
     } else {
-      console.log("❌ Utilisateur NON ADMIN");
+      logger.info("User not admin");
     }
   }, [user, role]);
 
@@ -166,11 +159,11 @@ function Etablissement({ title }) {
         setLoading(true);
         setError(null);
         
-        console.log("🔄 Tentative de connexion à l'API...");
+        logger.info("Fetching establishments");
         const res = await api.get("/groupe-8/etablissements");
         
         if (isMounted) {
-          console.log("✅ Réponse API reçue:", res.data);
+          logger.info("Establishments response received");
           
           let data;
           if (res.data && Array.isArray(res.data)) {
@@ -180,12 +173,12 @@ function Etablissement({ title }) {
           } else if (res.data && res.data.etablissements && Array.isArray(res.data.etablissements)) {
             data = res.data.etablissements;
           } else {
-            console.warn("⚠️ Structure de données inattendue:", res.data);
+            logger.warn("Unexpected data structure");
             data = [];
           }
           
           if (!Array.isArray(data)) {
-            console.warn("⚠️ Les données de l'API ne sont pas un tableau:", data);
+            logger.warn("API data not array");
             data = [];
           }
           
@@ -206,7 +199,7 @@ function Etablissement({ title }) {
                 
                 processedEtabs.push(processedEtab);
               } catch (error) {
-                console.error("❌ Erreur lors du traitement d'un établissement:", error);
+                logger.error("Processing establishment error:", error);
               }
             }
             
@@ -218,7 +211,7 @@ function Etablissement({ title }) {
           setEtabsWithImages(processedData);
         }
       } catch (err) {
-        console.error("❌ Erreur fetchData:", err);
+        logger.error("Fetch establishments error:", err);
         
         if (isMounted) {
           setError(`L'API n'est pas disponible (${err.message}). Affichage des données de démonstration.`);
@@ -247,14 +240,14 @@ function Etablissement({ title }) {
     const fetchEtabImage = async (etabId) => {
       try {
         const response = await api.get(`/groupe-8/etablissements/${etabId}/images`);
-        console.log(`📸 Image API pour ${etabId}:`, response.data);
+        logger.info("Image API response received");
         
         if (response.data && response.data.length > 0) {
           const firstImage = response.data[0];
           return firstImage.url || firstImage.imageUrl || firstImage.path;
         }
       } catch (error) {
-        console.warn(`⚠️ Impossible de charger l'image pour ${etabId}:`, error.message);
+        logger.warn("Image load failed:", error.message);
       }
       
       const randomIndex = Math.floor(Math.random() * etabImages.length);
@@ -283,7 +276,7 @@ function Etablissement({ title }) {
           }
           needsUpdate = true;
         } catch (err) {
-          console.error(`Erreur image pour ${etab.id}:`, err);
+          logger.error("Image error:", err);
           newCoverImages[etab.id] = etabImages[i % etabImages.length];
         }
       }
@@ -370,9 +363,9 @@ function Etablissement({ title }) {
       
       try {
         await api.delete(`/groupe-8/images/${id}`, { headers });
-        console.log(`✅ Images supprimées pour l'établissement ${id}`);
+        logger.info("Images deleted for establishment");
       } catch (imgError) {
-        console.warn(`⚠️ Impossible de supprimer les images: ${imgError.message}`);
+        logger.warn("Unable to delete images:", imgError.message);
       }
       
       await api.delete(`/groupe-8/admin/etablissements/${id}`, { headers });
@@ -382,7 +375,7 @@ function Etablissement({ title }) {
       
       alert("Établissement supprimé avec succès.");
     } catch (err) {
-      console.error("❌ Erreur lors de la suppression:", err);
+      logger.error("Delete error:", err);
       
       const errorMessage = err.response?.data?.message || err.message;
       const status = err.response?.status;
@@ -471,7 +464,7 @@ function Etablissement({ title }) {
       setIsModalOpen(false);
       alert("✨ Mise à jour réussie !");
     } catch (err) {
-      console.error("❌ Erreur lors de la mise à jour:", err);
+      logger.error("Update error:", err);
       
       const errorMessage = err.response?.data?.message || err.message;
       const status = err.response?.status;

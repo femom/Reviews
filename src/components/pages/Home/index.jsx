@@ -16,6 +16,7 @@ import {
   FiPlusCircle,
   FiNavigation,
 } from "react-icons/fi";
+import { logger } from "../../../utils/logger.js";
 
 // Images locales pour illustrer les établissements
 import img1 from "../../../assets/images/pexels-fotoaibe-1571459.jpg";
@@ -42,7 +43,7 @@ const Home = () => {
     api
       .get("https://api.react.nos-apps.com/api/groupe-8/etablissements")
       .then((response) => {
-        console.log("✅ Données API reçues:", response.data);
+        logger.info("Home data received");
         // Vérifier différentes structures de réponse
         if (response.data && Array.isArray(response.data)) {
           setEtablissements(response.data);
@@ -54,7 +55,7 @@ const Home = () => {
         }
       })
       .catch((err) => {
-        console.error("❌ Erreur API:", err);
+        logger.error("Home API error:", err);
         setError("Impossible de charger les établissements");
         setEtablissements([]);
       })

@@ -21,6 +21,7 @@ import {
   FiStar,
 } from "react-icons/fi";
 import { FaHeart, FaStar } from "react-icons/fa";
+import { logger } from "../../../utils/logger.js";
 
 function Details() {
   const { id } = useParams();
@@ -116,7 +117,7 @@ function Details() {
 
   // Fonction pour gérer les erreurs d'image principale
   const handleImageError = async (e, photoIndex) => {
-    console.warn(`Image échouée à l'index ${photoIndex}, utilisation du fallback`);
+    logger.warn(`Image failed at index ${photoIndex}, using fallback`);
     
     const photo = photos[photoIndex];
     if (!photo) return;
@@ -140,7 +141,7 @@ function Details() {
 
   // Fonction pour gérer les erreurs d'image miniature
   const handleThumbnailError = (e, index) => {
-    console.warn(`Miniature échouée à l'index ${index}`);
+    logger.warn(`Thumbnail failed at index ${index}`);
     e.target.src = getFallbackImage("X");
     e.target.onerror = null;
     
@@ -179,7 +180,7 @@ function Details() {
           fallbackUrl: exists ? fullUrl : getFallbackImage("Image non disponible")
         });
       } catch (error) {
-        console.error(`Erreur préchargement image ${i}:`, error);
+        logger.error(`Image preload error ${i}:`, error);
         results.push({ 
           url: fullUrl, 
           exists: false,
@@ -208,7 +209,7 @@ function Details() {
         const userData = JSON.parse(userStr);
         return userData.id ? parseInt(userData.id) : null;
       } catch (e) {
-        console.error("Erreur parsing user:", e);
+        logger.error("User parse error:", e);
         return null;
       }
     }
@@ -228,7 +229,7 @@ function Details() {
         const userData = JSON.parse(userStr);
         return userData.name || userData.email || userData.username || "Utilisateur";
       } catch (e) {
-        console.error("Erreur parsing user pour nom:", e);
+        logger.error("User name parse error:", e);
       }
     }
     
@@ -259,7 +260,7 @@ function Details() {
   }, []);
 
   const handleAddReview = async () => {
-    console.log("🔄 Début handleAddReview");
+    logger.info("Add review started");
     
     if (!checkAuthentication()) {
       alert("Veuillez vous connecter pour ajouter un avis.");
@@ -286,7 +287,7 @@ function Details() {
         user_id: userId
       };
       
-      console.log("📤 Envoi avis avec données:", reviewData);
+      logger.info("Submitting review");
       
       let endpoint;
       
@@ -296,11 +297,11 @@ function Details() {
         endpoint = `/api/groupe-8/etablissements/${id}/avis`;
       }
       
-      console.log("Endpoint utilisé:", endpoint);
+      logger.info("Review endpoint selected");
       
       const response = await api.post(endpoint, reviewData);
       
-      console.log("✅ Réponse API:", response.data);
+      logger.info("Review response received");
       
       const responseData = response.data;
       
@@ -319,7 +320,7 @@ function Details() {
         ...(responseData.data || {})
       };
       
-      console.log("Nouvel avis créé:", newReviewObj);
+      logger.info("Review created");
       
       setReviews(prev => [newReviewObj, ...prev]);
       
@@ -331,7 +332,7 @@ function Details() {
       alert("Votre avis a été ajouté avec succès!");
       
     } catch (err) {
-      console.error("❌ Erreur ajout avis:", err.response || err);
+      logger.error("Add review error:", err.response || err);
       
       if (err.response) {
         switch (err.response.status) {
@@ -415,7 +416,7 @@ function Details() {
       setEditReviewRating(0);
       alert("Votre avis a été modifié avec succès!");
     } catch (err) {
-      console.error("Erreur modification avis:", err);
+      logger.error("Review update error:", err);
       handleApiError(err);
     }
   };
@@ -438,7 +439,7 @@ function Details() {
       
       alert("Votre avis a été supprimé avec succès!");
     } catch (err) {
-      console.error("Erreur suppression avis:", err);
+      logger.error("Review delete error:", err);
       handleApiError(err);
     }
   };
@@ -485,7 +486,7 @@ function Details() {
         const favoritesList = JSON.parse(localStorage.getItem('favorites') || '[]');
         setFavorites(favoritesList.includes(id));
       } catch (err) {
-        console.error("Erreur récupération établissement:", err);
+        logger.error("Fetch establishment error:", err);
         setError(prev => ({
           ...prev, 
           etablissement: "Impossible de récupérer les détails de l'établissement."
@@ -509,7 +510,7 @@ function Details() {
           const res = await api.get(`/groupe-8/etablissements/${id}/images`);
           imagesData = res.data.data || res.data || [];
         } catch (apiError) {
-          console.warn("API images échouée, essai des images de l'établissement");
+          logger.warn("Images API failed, trying fallback");
           // Si l'API échoue, utiliser les images de l'établissement
           if (etablissement?.images?.length > 0) {
             imagesData = etablissement.images.map(img => ({ url: img }));
@@ -548,10 +549,10 @@ function Details() {
         setPhotos(processedPhotos);
         setError(prev => ({...prev, images: null}));
         
-        console.log(`✅ ${processedPhotos.filter(p => p.exists).length}/${processedPhotos.length} images chargées avec succès`);
+        logger.info("Images loaded successfully");
 
       } catch (err) {
-        console.error("Erreur traitement images:", err);
+        logger.error("Images processing error:", err);
         
         // En cas d'erreur, utiliser un fallback
         const fallbackImage = {
@@ -583,7 +584,7 @@ function Details() {
       setReviews(avisData);
       setError(prev => ({...prev, avis: null}));
     } catch (err) {
-      console.error("Erreur récupération avis:", err);
+      logger.error("Fetch reviews error:", err);
       setError(prev => ({
         ...prev, 
         avis: "Impossible de charger les avis."

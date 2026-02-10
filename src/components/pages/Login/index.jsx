@@ -4,6 +4,7 @@ import Topsejour from "../../../assets/images/Topsejour.png";
 import api from '../../services/api';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiLock, FiMail } from "react-icons/fi";
+import { logger } from "../../../utils/logger.js";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,21 +16,21 @@ const Login = () => {
   // Fonction de connexion directe (sans AuthContext pour debug)
   const handleLoginDirect = async (email, password) => {
     try {
-      console.log("🔐 Tentative connexion directe...");
+      logger.info("Login attempt");
       
       const response = await api.post('/groupe-8/auth/login', {
         email,
         password
       });
 
-      console.log("✅ Réponse API login:", response.data);
+      logger.info("Login response received");
       
       // VÉRIFIEZ LA STRUCTURE DE LA RÉPONSE
       const token = response.data.access_token || response.data.token;
       const userData = response.data.user || response.data;
       
-      console.log("Token extrait:", token ? token.substring(0, 20) + '...' : 'NON TROUVÉ');
-      console.log("UserData:", userData);
+      logger.info("Token extracted:", token ? "present" : "missing");
+      logger.info("User payload received");
       
       if (token && userData) {
         // STOCKAGE COMPLET ET COHÉRENT
@@ -38,18 +39,15 @@ const Login = () => {
         localStorage.setItem('userName', userData.name || userData.username || '');
         
         // Vérifiez le stockage
-        console.log("📦 Après stockage:");
-        console.log("- authToken:", localStorage.getItem('authToken') ? "✓" : "✗");
-        console.log("- userId:", localStorage.getItem('userId'));
-        console.log("- userName:", localStorage.getItem('userName'));
+        logger.info("Auth data stored");
         
         return { success: true, user: userData };
       } else {
-        console.error("❌ Données manquantes dans la réponse");
+        logger.error("Missing data in login response");
         return { success: false, error: "Structure de réponse invalide" };
       }
     } catch (error) {
-      console.error("❌ Erreur connexion:", error.response?.data || error);
+      logger.error("Login error:", error.response?.data || error);
       return { 
         success: false, 
         error: error.response?.data?.message || "Erreur de connexion" 
@@ -68,13 +66,13 @@ const Login = () => {
       const result = await handleLoginDirect(email, password);
       
       if (result.success) {
-        console.log("🎉 Connexion réussie, redirection...");
+        logger.info("Login success, redirecting");
         navigate("/", { replace: true });
       } else {
         setError(result.error || "Erreur de connexion");
       }
     } catch (err) {
-      console.error("Erreur inattendue:", err);
+      logger.error("Unexpected error:", err);
       setError("Une erreur inattendue s'est produite");
     } finally {
       setLoading(false);

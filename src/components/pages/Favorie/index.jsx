@@ -4,6 +4,7 @@ import api from "../../services/api";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { FiAlertTriangle, FiMapPin, FiArrowUp, FiStar, FiArrowRight } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
+import { logger } from "../../../utils/logger.js";
 
 function Favoris() {
   const [etablissements, setEtablissements] = useState([]);
@@ -30,23 +31,23 @@ function Favoris() {
         setLoading(true);
         setError(null);
         
-        console.log("🔄 Chargement des favoris...");
+        logger.info("Loading favorites");
         
         // Vérifier si l'utilisateur a des favoris
         const userFavorites = Array.isArray(favorites) ? favorites : [];
         
         if (userFavorites.length === 0) {
-          console.log("ℹ️ Aucun favori trouvé");
+          logger.info("No favorites found");
           setEtablissements([]);
           setLoading(false);
           return;
         }
 
-        console.log(`📋 Favoris de l'utilisateur: ${userFavorites.length} établissements`);
+        logger.info(`Favorites count: ${userFavorites.length}`);
         
         // Récupérer tous les établissements
         const response = await api.get("/groupe-8/etablissements");
-        console.log("✅ Données API reçues:", response.data);
+        logger.info("Favorites data received");
         
         // Gestion de la réponse selon la structure
         let allEtablissements;
@@ -66,7 +67,7 @@ function Favoris() {
           userFavorites.includes(etab.id?.toString())
         );
         
-        console.log(`⭐ Établissements favoris trouvés: ${favoriteEtabs.length}`);
+        logger.info(`Favorite establishments found: ${favoriteEtabs.length}`);
         
         // Ajouter des images aux établissements
         const etabsWithImages = favoriteEtabs.map((etab, index) => ({
@@ -84,7 +85,7 @@ function Favoris() {
         setEtablissements(etabsWithImages);
         
       } catch (err) {
-        console.error("❌ Erreur lors du chargement des favoris:", err);
+        logger.error("Favorites load error:", err);
         setError("Impossible de charger vos établissements favoris. Veuillez réessayer.");
         setEtablissements([]);
       } finally {
@@ -97,7 +98,7 @@ function Favoris() {
 
   // Fonction pour gérer les erreurs d'image
   const handleImageError = (e, index) => {
-    console.warn("Image failed to load, using fallback");
+    logger.warn("Image failed to load, using fallback");
     const fallbackIndex = index % etabImages.length;
     e.target.src = etabImages[fallbackIndex];
     e.target.onerror = null; // Empêche les boucles infinies

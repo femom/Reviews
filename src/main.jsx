@@ -6,6 +6,15 @@ import { AuthProvider } from "./components/context/AuthContext.jsx";
 import { BrowserRouter } from "react-router-dom";
 import initScrollReveal from "./utils/scrollReveal";
 
+// Silence verbose logs in production to avoid leaking sensitive info
+if (import.meta.env.PROD) {
+  // keep errors for diagnostics
+  console.log = () => {};
+  console.info = () => {};
+  console.warn = () => {};
+  console.debug = () => {};
+}
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>

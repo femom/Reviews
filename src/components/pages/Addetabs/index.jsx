@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { FiShield, FiX, FiCheck, FiAlertTriangle, FiUpload, FiPlus } from "react-icons/fi";
+import { logger } from "../../../utils/logger.js";
 
 const Addetabs = () => {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ const Addetabs = () => {
       if (!userStr) return false;
       
       const user = JSON.parse(userStr);
-      console.log("Vérification rôle admin:", {
+      logger.info("Admin role check");
         user: user,
         groupe8_role: user.groupe8_role,
         role: user.role,
@@ -58,7 +59,7 @@ const Addetabs = () => {
       
       return isAdminUser;
     } catch (e) {
-      console.error("Erreur vérification admin:", e);
+      logger.error("Admin check error:", e);
       return false;
     }
   };
@@ -70,7 +71,7 @@ const Addetabs = () => {
     
     // Vérifier si l'utilisateur est admin
     const adminStatus = checkAdminStatus();
-    console.log("Résultat vérification admin:", adminStatus);
+    logger.info("Admin status resolved");
     setIsAdmin(adminStatus);
     
     if (!adminStatus && isMountedRef.current) {
@@ -126,18 +127,18 @@ const Addetabs = () => {
     try {
       // Testez l'accès admin avec une requête simple
       const testResponse = await api.get('/groupe-8/admin/etablissements');
-      console.log("Test accès admin réussi:", testResponse.status);
+      logger.info("Admin access test ok");
       return true;
     } catch (testError) {
-      console.log("Test accès admin échoué:", testError.response?.status);
+      logger.warn("Admin access test failed");
       
       if (testError.response?.status === 403) {
         // Essayez de récupérer les infos utilisateur pour debug
         try {
           const userInfo = await api.get('/auth/me');
-          console.log("Infos utilisateur:", userInfo.data);
+          logger.info("User info retrieved");
         } catch (userError) {
-          console.log("Impossible de récupérer les infos utilisateur");
+          logger.warn("Unable to fetch user info");
         }
       }
       return false;
@@ -157,7 +158,7 @@ const Addetabs = () => {
     setLoading(true);
 
     try {
-      console.log('🔐 Vérification des permissions...');
+      logger.info("Verifying permissions");
 
       const etablissementData = {
         nom: formData.nom.trim(),
@@ -167,14 +168,14 @@ const Addetabs = () => {
         description: formData.description.trim() || null
       };
       
-      console.log('📦 Données envoyées:', etablissementData);
+      logger.info("Submitting establishment");
       
       const response = await api.post(
         '/groupe-8/admin/etablissements',
         etablissementData
       );
       
-      console.log('✅ Réponse création:', response.data);
+      logger.info("Creation response received");
       
       const etablissementId = response.data.id || 
                              response.data.data?.id;
@@ -194,9 +195,9 @@ const Addetabs = () => {
               }
             }
           );
-          console.log('✅ Image uploadée avec succès');
+          logger.info("Image upload ok");
         } catch (imageError) {
-          console.warn('⚠️ Erreur image:', imageError.message);
+          logger.warn("Image upload error:", imageError.message);
           // Ne pas bloquer le succès principal
         }
       }
@@ -212,7 +213,7 @@ const Addetabs = () => {
       }
       
     } catch (error) {
-      console.error('❌ Erreur complète:', {
+      logger.error("Add establishment error:", {
         message: error.message,
         response: error.response?.data,
         status: error.response?.status,

@@ -4,6 +4,7 @@ import SearchBar from "../SearchBar/index.jsx";
 import Button from "../Button/index.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import { FiCheckCircle, FiAlertCircle, FiMenu, FiX, FiSun, FiMoon } from "react-icons/fi";
+import { logger } from "../../utils/logger.js";
 
 function NavBar() {
   const [isAuth, setIsAuth] = useState(false);
@@ -26,7 +27,7 @@ function NavBar() {
           const user = JSON.parse(userData);
           setUserName(user.name || "");
         } catch (e) {
-          console.error("Erreur parsing userData:", e);
+          logger.error("User data parse error:", e);
         }
       }
     };

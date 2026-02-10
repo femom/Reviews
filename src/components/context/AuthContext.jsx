@@ -1,6 +1,7 @@
 // context/AuthContext.jsx - VERSION CORRIGÉE
 import React, { createContext, useState, useContext, useEffect } from "react";
 import api from "../services/api";
+import { logger } from "../../utils/logger.js";
 
 const AuthContext = createContext({});
 
@@ -30,15 +31,15 @@ export const AuthProvider = ({ children }) => {
             try {
               const parsedUser = JSON.parse(userStr);
               setUser(parsedUser);
-              console.log("👤 Utilisateur restauré:", parsedUser);
+              logger.info("User restored");
             } catch (parseError) {
-              console.error("❌ Erreur parsing user:", parseError);
+              logger.error("User parse error:", parseError);
               localStorage.removeItem("user"); // Nettoyer les données corrompues
             }
           }
         }
       } catch (error) {
-        console.error("❌ Erreur initialisation auth:", error);
+        logger.error("Auth init error:", error);
       } finally {
         setLoading(false);
       }
@@ -49,7 +50,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      console.log("🔑 Tentative de login...");
+      logger.info("Auth login attempt");
       
       const response = await api.post(
         `/groupe-8/auth/login`,
@@ -58,10 +59,7 @@ export const AuthProvider = ({ children }) => {
 
       const { token, user: userData } = response.data;
       
-      console.log("✅ Login réussi, données:", { 
-        tokenPresent: !!token, 
-        userData 
-      });
+      logger.info("Auth login success");
       
       // ⚠️ IMPORTANT: Stocker TOUT dans localStorage
       localStorage.setItem("token", token);
@@ -76,7 +74,7 @@ export const AuthProvider = ({ children }) => {
           id: response.data.id || Date.now()
         };
         localStorage.setItem("user", JSON.stringify(minimalUser));
-        console.log("📝 Utilisateur minimal créé:", minimalUser);
+        logger.info("Minimal user created");
       }
       
       // Configurer axios
@@ -86,12 +84,12 @@ export const AuthProvider = ({ children }) => {
       const finalUser = userData || { email, role: 'user' };
       setUser(finalUser);
       
-      console.log("🏁 Login terminé, user défini:", finalUser);
+      logger.info("Auth login completed");
       
       return { success: true, user: finalUser };
       
     } catch (error) {
-      console.error("❌ Erreur login complète:", {
+      logger.error("Auth login error:", {
         message: error.message,
         status: error.response?.status,
         data: error.response?.data,
@@ -140,7 +138,7 @@ export const AuthProvider = ({ children }) => {
                storedUser.isAdmin === true || 
                storedUser.is_admin === true;
       } catch (e) {
-        console.error("Erreur parsing pour admin check:", e);
+        logger.error("Admin check parse error:", e);
         return false;
       }
     }
