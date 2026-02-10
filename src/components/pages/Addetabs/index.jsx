@@ -44,8 +44,8 @@ const Addetabs = () => {
       if (!userStr) return false;
       
       const user = JSON.parse(userStr);
-      logger.info("Admin role check");
-        user: user,
+      logger.info("Admin role check", {
+        hasUser: !!user,
         groupe8_role: user.groupe8_role,
         role: user.role,
         is_admin: user.is_admin
